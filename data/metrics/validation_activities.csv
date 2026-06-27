@@ -1,0 +1,15 @@
+VALIDATION_ID,PROJECT_ID,VALIDATION_ACTIVITY,SCOPE,PLANNED_DATE,ACTUAL_DATE,STATUS,CUSTOMER_ACCEPTANCE,CUSTOMERS_INVOLVED,FINDINGS_COUNT,OPEN_FINDINGS,VALIDATION_ENVIRONMENT,APPROVED_BY,NOTES
+VAL001,P001,Prototype Validation Thermal,Compressor thermal performance validation,2026-06-15,TBD,PLANNED,PENDING,OEM Tier1,0,0,Test Vehicle Dyno,TBD,Customer validation planned
+VAL002,P001,Prototype Validation Control,Boost pressure control validation,2026-06-20,TBD,PLANNED,PENDING,OEM Vehicle Dynamics,0,0,Full Vehicle Test,TBD,Prototype build required
+VAL003,P002,Factory Acceptance EV Motor,Motor performance validation,2026-05-20,2026-05-22,COMPLETED,PASSED,OEM EV Platform,0,0,Dynamometer,David Chen,Successful FAT
+VAL004,P002,Vehicle Integration Validation,Full vehicle integration and performance,2026-06-01,TBD,PLANNED,PENDING,OEM EV Platform,0,0,Test Vehicle,David Chen,Scheduled for June
+VAL005,P003,Safety System Validation,Functional safety system validation,2026-07-01,TBD,PLANNED,PENDING,OEM Safety Team,0,0,Test Vehicle,Patricia Williams,Depends on design
+VAL006,P001,Environmental Validation,Temperature and humidity testing,2026-06-10,TBD,PLANNED,PENDING,OEM Engineering,0,0,Environmental Chamber,Maria Garcia,Validation planned
+VAL007,P002,Performance Validation,Performance verification,2026-05-15,2026-05-18,COMPLETED,PASSED,OEM,0,0,Dynamometer,David Chen,Successful validation
+VAL008,P004,Legacy System Validation,Data integrity and compatibility,2026-03-20,2026-03-25,COMPLETED,PASSED,End Users,0,0,Production System,Jennifer Lee,User acceptance completed
+VAL009,P005,Security Validation,Cybersecurity validation and audit,2026-07-15,TBD,PLANNED,PENDING,OEM Security Team,0,0,Test Lab,Robert Johnson,Third party audit scheduled
+VAL005,P002,Customer Acceptance Test,Customer-specific requirements verification,2026-06-15,TBD,PLANNED,PENDING,"3 Lead Customers","TBD",0,"Customer Test Facilities (remote)","David Chen","CAT schedule coordinated with customer availability"
+VAL006,P003,Safety Validation - ASIL-D,Full ASIL-D functional safety validation,2026-07-01,TBD,PLANNED,PENDING,"Functional Safety Authority","TBD",0,"Safety Test Lab; HiL; Vehicle","Patricia Williams","Dependent on ASIL decomposition completion"
+VAL007,P004,Production Validation - Legacy Migration,Full production environment validation,2026-04-15,2026-05-05,COMPLETED,PASSED,"Customer IT, Operations",0,0,"Production Data Center; Live Data","Jennifer Lee","Go-live successful; 30-day stability monitoring"
+VAL008,P005,Security Validation - Threat Assessment,Third-party security assessment,2026-06-01,TBD,IN_PROGRESS,PENDING,"External Security Auditor","3 of 5",0,"Staging Environment + Penetration Testing","Robert Johnson","Security audit 40% complete; report due 2026-06-15"
+VAL009,P005,Compliance Validation - FIPS 140-2,FIPS 140-2 certification validation,2026-07-01,TBD,PLANNED,PENDING,"FIPS Certification Authority","N/A",0,"Certification Lab","Robert Johnson","Certification timeline: 8-12 weeks after fix completion"

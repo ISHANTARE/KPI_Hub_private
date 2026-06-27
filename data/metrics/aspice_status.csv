@@ -1,0 +1,41 @@
+ASPICE_PROCESS,PROJECT_ID,PROCESS_AREA,TARGET_LEVEL,CURRENT_LEVEL,COMPLETION_PCT,WORK_PRODUCTS_PLANNED,WORK_PRODUCTS_COMPLETED,REVIEWS_PLANNED,REVIEWS_COMPLETED,STATUS,ASSESSMENT_READINESS,COMMENTS
+SYS.1,P001,Software Architecture,Level 2,Level 1,35%,5,2,3,1,IN_PROGRESS,NOT_READY,Architecture drafted
+SYS.2,P001,Software Design,Level 2,Level 1,28%,8,2,4,1,IN_PROGRESS,NOT_READY,Design phase ongoing
+SYS.3,P001,Software Unit Implementation,Level 2,Level 0,15%,12,2,6,0,PLANNED,NOT_READY,Development starting
+SYS.4,P001,Software Integration Testing,Level 2,Level 0,10%,8,0,4,0,PLANNED,NOT_READY,Testing pending
+SWE.1,P001,Software Implementation,Level 2,Level 1,32%,20,6,8,2,IN_PROGRESS,NOT_READY,Development 30% complete
+SWE.2,P001,Software Unit Verification,Level 2,Level 1,25%,15,4,8,2,IN_PROGRESS,NOT_READY,Test coverage 45%
+SWE.3,P001,Software Integration Verification,Level 2,Level 0,12%,12,0,6,0,PLANNED,NOT_READY,Integration testing pending
+SWE.4,P001,Software System Testing,Level 2,Level 1,20%,10,2,5,1,IN_PROGRESS,NOT_READY,Execution 20% complete
+SWE.5,P001,Software Non-functional Testing,Level 2,Level 0,8%,8,0,4,0,PLANNED,NOT_READY,Performance testing planned
+SYS.1,P002,Software Architecture,Level 2,Level 2,80%,5,5,3,3,COMPLETED,READY,Architecture approved
+SYS.2,P002,Software Design,Level 2,Level 2,85%,8,7,4,4,COMPLETED,READY,Design ready for implementation
+SWE.1,P002,Software Implementation,Level 2,Level 2,90%,20,18,8,8,COMPLETED,READY,Development nearly complete
+SWE.2,P002,Software Unit Verification,Level 2,Level 1,70%,15,11,8,6,IN_PROGRESS,NOT_READY,Test coverage 75%
+SWE.4,P002,Software System Testing,Level 2,Level 1,50%,10,5,5,3,IN_PROGRESS,NOT_READY,Testing 50% complete
+SYS.1,P003,Software Architecture,Level 2,Level 0,0%,5,0,3,0,PLANNED,NOT_READY,Blocked by consultant
+SYS.2,P003,Software Design,Level 2,Level 0,0%,8,0,4,0,PLANNED,NOT_READY,Pending architecture
+SWE.1,P003,Software Implementation,Level 2,Level 0,0%,20,0,8,0,PLANNED,NOT_READY,Not started
+SWE.4,P003,Software System Testing,Level 2,Level 0,0%,10,0,5,0,PLANNED,NOT_READY,Not started
+QUAL.1,P001,Process Quality,Level 1,Level 1,50%,3,2,2,1,IN_PROGRESS,NOT_READY,Quality plan in place
+QUAL.1,P002,Process Quality,Level 2,Level 1,70%,5,3,3,2,IN_PROGRESS,READY,Quality activities ongoing
+MAN.1,P001,Project Management,Level 2,Level 2,95%,8,8,4,4,COMPLETED,READY,Project tracking established
+MAN.1,P002,Project Management,Level 2,Level 2,100%,8,8,4,4,COMPLETED,READY,Project management mature
+MAN.1,P003,Project Management,Level 1,Level 1,40%,5,2,3,1,IN_PROGRESS,NOT_READY,Planning in progress
+MAN.1,P004,Project Management,Level 2,Level 2,100%,8,8,4,4,COMPLETED,READY,Completed project
+SWE.6,P001,Software Quality Assurance,Level 1,Level 0,18%,5,1,3,0,PLANNED,NOT_READY,"QA plan drafted; full implementation pending"
+SYS.1,P002,Software Architecture,Level 2,Level 2,85%,5,5,3,3,IN_PROGRESS,READY,"System architecture complete and reviewed; minor refinements"
+SYS.2,P002,Software Design,Level 2,Level 2,82%,8,7,4,4,COMPLETED,READY,"Detailed design complete; all reviews passed"
+SYS.3,P002,Software Unit Implementation,Level 2,Level 2,80%,12,10,6,6,IN_PROGRESS,NEARLY_READY,"Code development 80% complete"
+SYS.4,P002,Software Integration Testing,Level 2,Level 1,55%,8,4,4,2,IN_PROGRESS,NEARLY_READY,"Integration tests 55% complete"
+SWE.1,P002,Software Implementation,Level 2,Level 2,78%,20,16,8,8,IN_PROGRESS,NEARLY_READY,"Code development on track"
+SWE.2,P002,Software Unit Verification,Level 2,Level 2,82%,15,13,8,8,COMPLETED,READY,"Unit test coverage 85%; target met"
+SWE.3,P002,Software Integration Verification,Level 2,Level 1,60%,12,7,6,3,IN_PROGRESS,NEARLY_READY,"Integration verification 60% complete"
+SWE.4,P002,Software System Testing,Level 2,Level 2,75%,10,8,5,5,IN_PROGRESS,NEARLY_READY,"System testing on track; 75% complete"
+SWE.5,P002,Software Non-functional Testing,Level 1,Level 1,65%,8,5,4,3,IN_PROGRESS,NEARLY_READY,"Performance testing complete; reliability testing in progress"
+SWE.6,P002,Software Quality Assurance,Level 1,Level 1,70%,5,4,3,2,IN_PROGRESS,NEARLY_READY,"QA activities 70% complete"
+SYS.1,P003,Safety Architecture,Level 3,Level 1,22%,8,2,5,1,PLANNED,NOT_READY,"Safety architecture concept defined; detailed analysis pending"
+SYS.2,P003,Safety Design,Level 3,Level 0,8%,10,0,6,0,PLANNED,NOT_READY,"Safety design not started; waiting for ASIL decomposition"
+SWE.1,P003,Safety Implementation,Level 2,Level 0,5%,15,0,8,0,BLOCKED,NOT_READY,"Blocked; dependent on SYS.2 completion"
+SYS.4,P003,Safety Verification & Validation,Level 3,Level 0,3%,20,0,10,0,BLOCKED,NOT_READY,"Blocked; safety validation dependent on design completion"
+ASS.1,P005,Security Assessment,Level 2,Level 1,42%,8,3,4,1,IN_PROGRESS,NOT_READY,"Security assessment 42% complete; threat modeling ongoing"

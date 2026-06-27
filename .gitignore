@@ -2,9 +2,9 @@
 logs/
 *.log
 __pycache__/
-data/
 
 venv/
+reports/
 
 # Cache directories
 .pytest_cache/
@@ -15,5 +15,4 @@ venv/
 *.mp4
 
 # Internal analysis and design docs — not for public repo
-PROJECT_ANALYSIS_REPORT.md
 .kiro/

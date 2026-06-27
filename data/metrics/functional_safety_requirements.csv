@@ -1,0 +1,17 @@
+SAFETY_REQ_ID,PROJECT_ID,SAFETY_REQUIREMENT,ASIL_LEVEL,CATEGORY,STATUS,DERIVED_FROM,VERIFICATION_METHOD,TEST_ID,VALIDATION_STATUS,SAFETY_ANALYSIS_LINK,APPROVED_DATE,NOTES
+SR001,P003,Motor control failure detection within 10ms,D,Failure Detection,APPROVED,REQ011,Hardware Test,TC014,VERIFIED,FMEA_SM_001,2026-04-10,Critical timing
+SR002,P003,Boost pressure overshoot limit,D,System Performance,APPROVED,REQ002,Hardware Testing,TC003,IN_VERIFICATION,FMEA_CP_005,2026-04-15,Pending validation
+SR003,P003,Sensor failure detection within 50ms,D,Fault Detection,APPROVED,REQ011,Simulation,N/A,BLOCKED,FMEA_SEN_002,2026-04-20,Logic not implemented
+SR004,P003,Safety messages redundancy and error detection,D,Communication,APPROVED,REQ011,Message Analysis,N/A,NOT_STARTED,FMEA_COMM_001,2026-04-25,Format verification pending
+SR005,P002,Power supply failure detection,C,Failure Detection,APPROVED,REQ009,Hardware Test,TC008,VERIFIED,FMEA_PS_001,2026-03-15,Verified successfully
+SR006,P002,Watchdog timer function,C,System Monitoring,APPROVED,REQ009,Software Analysis,N/A,VERIFIED,FMEA_WATCH_001,2026-03-20,Software verified
+SR007,P001,Compressor overspeed protection,B,Mechanical Safety,APPROVED,REQ001,Hardware Test,TC006,VERIFIED,FMEA_COMP_001,2026-05-01,Mechanical limit verified
+SR008,P003,Safety architecture compliance,D,System Architecture,IN_PROGRESS,REQ011,Analysis,N/A,IN_PROGRESS,FMEA_ARCH_001,N/A,Analysis ongoing
+SR009,P002,Communication timeout detection,C,Communication,APPROVED,REQ008,Testing,TC010,VERIFIED,FMEA_COMM_002,2026-03-25,Complete
+SR010,P001,Emergency shutdown activation,B,System Safety,APPROVED,REQ004,Hardware Test,TC007,PENDING,FMEA_EMERG_001,2026-05-15,Pending vehicle test
+SR005,P003,Ignition cutoff function shall operate within 200ms of activation,D,Actuation,APPROVED,REQ011,Functional Test,TC015,BLOCKED,FMEA_ACT_001,2026-05-01,"Test blocked pending safety validation plan completion"
+SR006,P003,Memory corruption detection shall have 100% coverage,D,Data Integrity,OPEN,REQ013,Static Analysis,N/A,NOT_STARTED,FMEA_MEM_003,N/A,"Requires static analysis tool configuration"
+SR007,P003,Watchdog timer shall detect processor hang <500ms,D,Monitoring,APPROVED,REQ011,Unit Test & HIL,N/A,IN_VERIFICATION,FMEA_PROC_001,2026-04-05,"Logic verified; timing measurement ongoing"
+SR008,P003,Fail-safe state activation time <1 second,D,Fail-Safe,APPROVED,REQ011,Hardware Test,TC015,BLOCKED,FMEA_FAILSAFE_001,2026-04-30,"Dependent on SR005 completion"
+SR009,P003,Environmental stress testing shall cover automotive temperature range,C,Environmental,APPROVED,REQ002,Environmental Chamber Test,N/A,PLANNED,FMEA_ENV_001,2026-05-10,"Test planning in progress; facility booking Q3"
+SR010,P003,Diagnostic coverage shall exceed 99% of failures,D,Diagnostics,OPEN,REQ011,FMEA Analysis,N/A,NOT_STARTED,FMEA_DIAG_001,N/A,"FMEA incomplete; coverage analysis pending"

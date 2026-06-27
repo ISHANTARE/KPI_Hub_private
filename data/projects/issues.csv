@@ -1,0 +1,17 @@
+ISSUE_ID,PROJECT_ID,ISSUE_TITLE,DESCRIPTION,SEVERITY,STATUS,CREATED_DATE,RESOLUTION_DATE,DAYS_OPEN,ASSIGNED_TO,RELATED_RISK,ESCALATION_LEVEL,ROOT_CAUSE,IMPACT,PLANNED_HOURS,ACTUAL_HOURS
+I001,P001,Supplier Quality Issue,Incoming inspection rejecting components,HIGH,IN_PROGRESS,2026-05-10,,20.0,John Smith,R001,MANAGEMENT,Process control breakdown,2-week schedule impact,48.0,59.0
+I002,P001,CFD Analysis Bottleneck,Only one CFD engineer available,HIGH,OPEN,2026-05-01,,29.0,Maria Garcia,R002,PMO,Resource constraint,Critical path delay risk,38.0,48.0
+I003,P001,Design Document Version Control,Multiple design revisions circulating,MEDIUM,IN_PROGRESS,2026-05-15,,15.0,Maria Garcia,,ENGINEERING,Process gap,Potential rework,24.0,15.0
+I004,P001,Test Facility Booking Conflict,Both P001 and P002 scheduled same day,MEDIUM,RESOLVED,2026-05-12,2026-05-18,6.0,Michael Brown,,OPERATIONS,Inadequate capacity planning,Resolved by rebooking,17.0,30.0
+I005,P002,CAN Bus Harness Layout,EMI shielding inadequate in PCB layout,HIGH,IN_PROGRESS,2026-05-14,,16.0,Sarah Williams,D008,ENGINEERING,Design review gaps,Critical for EMC compliance,30.0,31.0
+I006,P002,Integration Test Environment Unavailable,Staging environment server failure,MEDIUM,RESOLVED,2026-05-20,2026-05-22,2.0,David Chen,,IT_OPERATIONS,Hardware aging,2-day delay,48.0,67.0
+I007,P003,ASIL Decomposition Consultant Delay,Functional safety consultant delayed,HIGH,OPEN,2026-04-15,,45.0,Patricia Williams,R004,PROGRAM_MANAGEMENT,External resource availability,Safety validation at risk,28.0,23.0
+I008,P003,Requirements Traceability Tool Limitation,Tool cannot generate ISO 26262 matrix,MEDIUM,ESCALATED,2026-05-01,,29.0,Patricia Williams,,ENGINEERING,Tool feature gap,Manual workaround consuming time,32.0,23.0
+I009,P004,Legacy System Knowledge Transfer,Key architect retiring June 1,HIGH,RESOLVED,2026-02-01,2026-05-15,103.0,Jennifer Lee,R006,HR,Resource transition planning,Successfully mitigated,20.0,37.0
+I010,P001,Design Review Scheduling,Conflicts with vacation schedules,MEDIUM,OPEN,2026-05-20,,10.0,Maria Garcia,,ENGINEERING,Planning issue,Review delayed 1 week,20.0,30.0
+I011,P002,Motor Testing Resources,Shortage of dyno test engineers,MEDIUM,OPEN,2026-05-18,,12.0,David Chen,,OPERATIONS,Skill shortage,Testing timeline extended,33.0,23.0
+I012,P003,Safety Documentation Updates,ISO 26262 documentation needs revision,HIGH,IN_PROGRESS,2026-05-10,,20.0,Patricia Williams,,ENGINEERING,Compliance requirement,Must complete before certification,45.0,46.0
+I010,P005,Vendor Lock-in Risk,Cryptography library from single vendor; no open-source alternative,MEDIUM,OPEN,2026-04-20,,40.0,Robert Johnson,,PROCUREMENT,Evaluation process gap,Vendor consolidation strategy needed; potential cost optimization,49.0,64.0
+I011,P005,Certificate Authority Bottleneck,CA approval process takes 4 weeks; blocking production deployment,HIGH,ESCALATED,2026-05-15,,15.0,Robert Johnson,,SECURITY_OPERATIONS,Process capacity issue,Production release at risk,33.0,44.0
+I012,P005,Team Onboarding Delay,New security analysts need 4-week ramp-up; productivity below 50%,MEDIUM,IN_PROGRESS,2026-05-10,,20.0,Lisa Anderson,,HR,Faster than expected hiring; training backlog,Resource utilization below planned 85%,12.0,30.0
+P001-2288,P001,"Plan for integrations with DOORS, JAMA, and Polari","Plan for integrations with DOORS, JAMA, and Polarion for v2.0 roadmap.",MEDIUM,OPEN,2026-06-18,N/A,,Development Team,,,,,,

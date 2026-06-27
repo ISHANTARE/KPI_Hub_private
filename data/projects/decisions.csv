@@ -1,0 +1,6 @@
+DECISION_ID,PROJECT_ID,TYPE,TITLE,IMPACT,OWNER,DUE_DATE,APPROVAL_STATUS
+DEC001,P001,Decision,Approve final thermal design,High,Maria Garcia,2026-06-09,Pending Approval
+DEC002,P001,Assumption,Assuming 85C max operating temp,Medium,Tech Resource Pool,2026-06-17,Open
+DEC003,P002,Risk,Accept EMI shielding cost increase,High,Sarah Williams,2026-06-24,In Progress
+DEC004,P003,Decision,Select safety MCU vendor,Critical,Patricia Williams,2026-06-04,Pending Approval
+DEC005,P001,Decision,Approve supplier contract,Medium,John Smith,2026-05-30,Approved

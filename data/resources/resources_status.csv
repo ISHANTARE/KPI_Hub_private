@@ -1,0 +1,16 @@
+PROJECT_ID,TEAM_MEMBER,ROLE,SKILL,ALLOCATED_HOURS_WEEKLY,UTILIZED_HOURS_WEEKLY,UTILIZATION_PCT,DEPARTMENT,START_DATE,END_DATE,ALLOCATION_STATUS,NOTES
+P001,John Smith,Project Manager,Program Management,40,40,100%,PMO,2026-01-01,2026-08-31,ALLOCATED,Full-time project lead
+P001,Maria Garcia,Senior Design Engineer,Thermal Systems,40,36,90%,Engineering Design,2026-01-15,2026-07-31,ALLOCATED,Design lead
+P001,Tech Resource Pool,CFD Engineers,CFD Analysis,80,95,119%,Engineering CAE,2026-02-01,2026-06-30,OVERALLOCATED,Bottleneck
+P002,David Chen,Program Manager,EV Programs,40,38,95%,PMO,2026-03-01,2026-09-30,ALLOCATED,On track
+P002,Sarah Williams,Controls Engineer,Motor Control,70,32,80%,Engineering Electrical,2026-03-15,2026-09-30,ALLOCATED,Some bench time
+P003,Patricia Williams,Safety Engineer,Functional Safety,40,40,100%,Engineering Safety,2026-04-01,2026-06-30,ALLOCATED,ISO 26262 lead
+P003,Michael Brown,Test Engineer,Test & Validation,30,25,83%,Quality Assurance,2026-04-15,2026-07-31,ALLOCATED,Shared resource
+P004,Jennifer Lee,Knowledge Engineer,Documentation,20,15,75%,Engineering,2026-02-01,2026-04-30,COMPLETED,Project completion
+P005,Robert Johnson,Security Architect,Cybersecurity,40,35,88%,Security,2026-05-01,2026-12-31,ALLOCATED,Phased approach
+P001,Michael Gwen,Test Engineer,Test & Validation,35,28,80%,Quality Assurance,2026-05-01,2026-08-31,ALLOCATED,Secondary test lead
+P005,Lisa Anderson,Security Analyst,Threat Analysis,30,28,93%,Security,2026-06-01,2026-12-31,ALLOCATED,Recent hire (2 weeks)
+P002,James Malclom,Engineering Manager,Management,40,42,105%,Management,2026-01-01,2026-12-31,OVERALLOCATED,Managing 3 teams
+P003,Anna Jacobs,Junior Dev,Software,40,20,50%,Engineering,2026-05-01,2026-10-01,AVAILABLE,"Onboarding finished, ready for work"
+P004,Chris Brown,Safety Architect,Safety,40,55,137%,Engineering Safety,2026-02-01,2026-11-01,OVERALLOCATED,Critical bottleneck on safety docs
+P001,Normal Worker,Systems Engineer,Systems,40,38,95%,Engineering,2026-01-01,2026-12-31,ALLOCATED,Steady state

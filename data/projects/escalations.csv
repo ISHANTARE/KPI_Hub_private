@@ -1,0 +1,11 @@
+ESCALATION_ID,PROJECT_ID,ESCALATION_TITLE,ESCALATION_TYPE,SEVERITY,STATUS,CREATED_DATE,RESOLVED_DATE,ESCALATED_TO,ROOT_CAUSE,BUSINESS_IMPACT,RESOLUTION,DAYS_OPEN
+E001,P001,Supplier Quality Delivery Miss,CUSTOMER,HIGH,ESCALATED,2026-05-10,N/A,VP Sales & Program Director,Supplier capacity constraint,Risk of 2-week program delay,Engage secondary supplier,20
+E002,P001,Thermal Design Uncertainty,TECHNICAL,HIGH,ESCALATED,2026-05-15,N/A,Chief Engineer,Design assumption incomplete,Risk of design rework,Reallocate CFD resources,15
+E003,P002,CAN Bus EMI Non-Compliance,TECHNICAL,CRITICAL,ESCALATED,2026-05-16,N/A,VP Engineering,Layout design oversight,Critical for automotive certification,Emergency redesign,14
+E004,P003,Safety Engineering Resource Gap,RESOURCE,CRITICAL,ESCALATED,2026-04-15,N/A,HR Director,Market shortage of ISO 26262 engineers,Safety program at risk,Expedite consultant onboarding,45
+E005,P003,FMEA Completion Blocked,SCHEDULE,HIGH,ESCALATED,2026-05-20,N/A,Program Director,Consultant delay cascading,Cannot proceed to safety validation,Accelerate timeline decision,8
+E006,P002,Integration Test Environment Failure,INFRASTRUCTURE,MEDIUM,RESOLVED,2026-05-20,2026-05-22,IT Director,Hardware maintenance overdue,2-day delay in testing,Hardware replacement completed,2
+E007,P004,Legacy System Data Corruption,DATA_QUALITY,MEDIUM,RESOLVED,2026-03-15,2026-04-10,CIO,ETL validation gaps,Data integrity questions,Data revalidation implemented,26
+E008,P005,Security Vendor Certification Delay,PROCUREMENT,MEDIUM,ESCALATED,2026-05-15,N/A,Procurement Manager,Vendor capacity constraint,Security compliance delayed,Expedited audit scheduled,15
+E009,P005,Production Certificate Authority Bottleneck,OPERATIONS,HIGH,ESCALATED,2026-05-15,N/A,VP Operations,CA process capacity exceeded,Production release blocked,CA escalation approved,15
+E010,P001,Design Review Meeting Scheduling,PROCESS,LOW,RESOLVED,2026-05-12,2026-05-18,"Program Manager","Calendar conflicts; participant availability","Minor delay in design closure activities; non-critical path",Meeting rescheduled; attendee list optimized,6

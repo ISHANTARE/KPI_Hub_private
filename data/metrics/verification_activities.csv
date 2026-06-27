@@ -1,0 +1,27 @@
+VERIFICATION_ID,PROJECT_ID,VERIFICATION_ACTIVITY,COMPONENT,REQUIREMENT_ID,PLANNED_DATE,ACTUAL_DATE,STATUS,RESULT,FINDINGS_COUNT,OPEN_FINDINGS,VERIFICATION_METHOD,TEST_CASE_LINK,APPROVED_BY,NOTES
+VER001,P001,Compressor Performance Verification,Compressor,REQ001,2026-05-20,2026-05-28,COMPLETED,PASSED,2,0,Dynamometer Test,TC001,Maria Garcia,Minor margin
+VER002,P001,Boost Pressure Control Verification,Control System,REQ002,2026-05-25,2026-05-27,FAILED,FAILED,5,5,HIL Testing,TC003,Sarah Williams,D002 active
+VER003,P001,Mechanical Seal Endurance,Mechanical,REQ003,2026-05-20,2026-05-25,COMPLETED,FAILED,3,1,Endurance Test,TC005,Tech Resource Pool,D003 issue
+VER004,P001,500k Cycle Durability,System,REQ004,2026-05-30,TBD,PLANNED,PENDING,0,0,Life Test,TC006,Maria Garcia,6 week test
+VER005,P002,Motor Efficiency Verification,Motor,REQ006,2026-05-15,2026-05-28,COMPLETED,PASSED,0,0,Dynamometer Test,TC008,David Chen,Specification met
+VER006,P002,Thermal Rise Verification,Motor,REQ007,2026-05-10,2026-05-27,COMPLETED,PASSED,0,0,Thermal Test,TC009,David Chen,Complete
+VER007,P002,CAN Bus Verification,Communication,REQ008,2026-05-01,2026-05-26,COMPLETED,PASSED,1,0,Vehicle Test,TC010,Sarah Williams,Timing margin
+VER008,P003,Safety Function Verification,Safety System,REQ010,2026-06-01,TBD,PLANNED,PENDING,0,0,HIL Test,TC012,Patricia Williams,Pending
+VER009,P001,Environmental Verification,System,REQ012,2026-06-01,TBD,PLANNED,PENDING,0,0,Environmental Test,TC015,Maria Garcia,Planned
+VER010,P002,Integration Verification,System,REQ009,2026-05-25,TBD,BLOCKED,BLOCKED,2,2,Integration Test,TC014,David Chen,Blocked by issue
+VER011,P003,Safety Analysis Verification,Safety,REQ011,2026-05-15,TBD,IN_PROGRESS,PENDING,3,3,Analysis Review,N/A,Patricia Williams,FMEA ongoing
+VER012,P001,Quality Function Verification,System,REQ001,2026-06-15,TBD,PLANNED,PENDING,0,0,Quality Test,TC020,Maria Garcia,Final validation
+VER013,P002,Reliability Verification,System,REQ009,2026-06-01,TBD,PLANNED,PENDING,0,0,HALT Test,TC016,David Chen,Planned
+VER014,P005,Security Verification,Security,REQ020,2026-07-01,TBD,PLANNED,PENDING,0,0,Audit,N/A,Robert Johnson,Pending
+VER015,P004,Data Migration Verification,System,N/A,2026-03-10,2026-03-20,COMPLETED,PASSED,0,0,System Test,N/A,Jennifer Lee,Complete
+VER005,P002,Motor Efficiency Verification,Motor,REQ006,2026-05-15,2026-05-28,FAILED,FAILED,4,4,"Dynamometer Test","TC008, TC009","David Chen","Efficiency 89.5% vs 92% target; D007 active"
+VER006,P002,Thermal Rise Verification,Motor,REQ007,2026-05-15,2026-05-27,COMPLETED,PASSED,0,0,"Thermal Chamber Test","TC009","David Chen","Thermal rise 78°C; within limit"
+VER007,P002,CAN Communication Verification,Communication,REQ008,2026-05-20,2026-05-26,FAILED,FAILED,6,6,"EMC Testing","TC010, TC011","Sarah Williams","EMI immunity issue identified; D008 active"
+VER008,P002,System Availability Verification,Integration,REQ009,2026-05-25,TBD,PLANNED,PENDING,0,0,"Long-Duration Test","N/A","David Chen","Planned for Q3 release validation"
+VER009,P002,UI Performance Verification,Software,REQ010,2026-05-20,2026-05-24,COMPLETED,PASSED,1,0,"Load Testing","TC012","Sarah Williams","1 minor optimization opportunity identified"
+VER010,P003,ASIL Requirement Coverage,Safety,REQ011,2026-05-01,TBD,BLOCKED,N/A,0,0,"FMEA Analysis","TC013","Patricia Williams","Blocked: FMEA incomplete (D010)"
+VER011,P003,Single-Point Failure Detection,Safety,REQ012,2026-05-15,TBD,IN_PROGRESS,N/A,0,0,"Simulation & Test","TC014","Patricia Williams","Diagnostic coverage analysis 60% complete"
+VER012,P003,ISO 26262 Compliance Verification,Documentation,REQ013,2026-05-10,TBD,BLOCKED,N/A,0,0,"Document Review","N/A","Patricia Williams","Blocked: insufficient supporting documentation"
+VER013,P004,Legacy System Migration,Data,REQ015,2026-03-01,2026-04-10,COMPLETED,PASSED,2,0,"Data Validation","TC016","Jennifer Lee","2 minor data type conversions required"
+VER014,P005,Authentication Security Verification,Security,REQ017,2026-05-20,2026-05-28,COMPLETED,PASSED,0,0,"Penetration Test","TC017","Robert Johnson","No vulnerabilities found"
+VER015,P005,Cryptography Compliance Verification,Security,REQ016,2026-05-15,TBD,IN_PROGRESS,N/A,1,1,"Cryptographic Analysis","TC020","Robert Johnson","1 finding: legacy MD5 usage (D013)"

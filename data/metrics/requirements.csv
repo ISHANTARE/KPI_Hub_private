@@ -1,0 +1,35 @@
+REQUIREMENT_ID,PROJECT_ID,REQUIREMENT_TEXT,CATEGORY,PRIORITY,STATUS,APPROVED_DATE,LAST_CHANGED,CHANGE_COUNT,TRACE_TEST_CASE,TRACE_DESIGN,VERIFICATION_STATUS,ASIL_LEVEL,IS_MINOR_REVISION
+REQ001,P001,Compressor outlet temperature limit,Thermal,Critical,APPROVED,2026-01-15,2026-04-10,2,"TC002, TC001",CAD-001,VERIFIED,,False
+REQ002,P001,Boost pressure regulation response,Control,Critical,APPROVED,2026-01-20,2026-03-01,1,"TC003, TC004",SW-001,IN_PROGRESS,,False
+REQ003,P001,Compressor seal leakage limit,Mechanical,High,APPROVED,2026-01-25,2026-05-15,3,TC005,CAD-002,IN_PROGRESS,,False
+REQ004,P001,System durability requirement,Durability,High,APPROVED,2026-02-01,,0,TC006,TEST-001,NOT_STARTED,,False
+REQ005,P001,Design documentation completeness,Documentation,Medium,OPEN,,2026-05-18,1,,DOC-001,NOT_STARTED,,False
+REQ006,P002,Motor efficiency minimum,Motor,Critical,APPROVED,2026-02-15,2026-04-20,1,"TC008, TC009",CAD-003,IN_PROGRESS,,False
+REQ007,P002,Motor thermal rise limit,Thermal,Critical,APPROVED,2026-02-20,,0,TC009,CAD-004,VERIFIED,,False
+REQ008,P002,CAN bus communication latency,Communication,High,APPROVED,2026-03-01,,0,TC011,SW-002,VERIFIED,,False
+REQ009,P002,System availability requirement,Reliability,High,APPROVED,2026-03-10,2026-05-01,2,,SW-003,IN_PROGRESS,,False
+REQ010,P003,Battery charge cycle lifetime,Durability,High,DRAFT,,2026-05-05,1,TC015,BATT-001,NOT_STARTED,,True
+REQ011,P004,Synthetic Requirement 11,Control,Medium,DRAFT,2026-01-01,2026-06-01,1,TC020,,NOT_STARTED,,False
+REQ012,P004,Synthetic Requirement 12,Thermal,Medium,PROPOSED,2026-01-01,2026-06-01,1,TC030,,NOT_STARTED,,False
+REQ013,P002,Synthetic Requirement 13,Mechanical,Medium,PROPOSED,2026-01-01,2026-06-01,1,TC024,,NOT_STARTED,,False
+REQ014,P004,Synthetic Requirement 14,Communication,Medium,OPEN,2026-01-01,2026-06-01,1,TC031,,NOT_STARTED,,False
+REQ015,P003,Synthetic Requirement 15,Control,Medium,APPROVED,2026-01-01,2026-06-01,1,,,NOT_STARTED,,False
+REQ016,P001,Synthetic Requirement 16,Motor,Medium,PROPOSED,2026-01-01,2026-06-01,1,TC044,,NOT_STARTED,,False
+REQ017,P002,Synthetic Requirement 17,Communication,Medium,DRAFT,2026-01-01,2026-06-01,1,TC037,,NOT_STARTED,,False
+REQ018,P004,Synthetic Requirement 18,Thermal,Medium,OPEN,2026-01-01,2026-06-01,1,TC010,,NOT_STARTED,,False
+REQ019,P002,Synthetic Requirement 19,Reliability,Medium,OPEN,2026-01-01,2026-06-01,1,TC034,,NOT_STARTED,,False
+REQ020,P004,Synthetic Requirement 20,Mechanical,Medium,PROPOSED,2026-01-01,2026-06-01,1,TC050,,NOT_STARTED,,False
+REQ021,P003,Synthetic Requirement 21,Thermal,Medium,OPEN,2026-01-01,2026-06-01,1,TC027,,NOT_STARTED,,False
+REQ022,P002,Synthetic Requirement 22,Control,Medium,UNDER_REVIEW,2026-01-01,2026-06-01,1,TC032,,NOT_STARTED,,False
+REQ023,P002,Synthetic Requirement 23,Control,Medium,UNDER_REVIEW,2026-01-01,2026-06-01,1,TC023,,NOT_STARTED,,False
+REQ024,P004,Synthetic Requirement 24,Mechanical,Medium,DRAFT,2026-01-01,2026-06-01,1,TC042,,NOT_STARTED,,False
+REQ025,P001,Synthetic Requirement 25,Motor,Medium,APPROVED,2026-01-01,2026-06-01,1,,,NOT_STARTED,,False
+REQ026,P003,Synthetic Requirement 26,Reliability,Medium,OPEN,2026-01-01,2026-06-01,1,TC030,,NOT_STARTED,,False
+REQ027,P002,Synthetic Requirement 27,Control,Medium,PROPOSED,2026-01-01,2026-06-01,1,TC018,,NOT_STARTED,,False
+REQ028,P002,Synthetic Requirement 28,Reliability,Medium,OPEN,2026-01-01,2026-06-01,1,TC023,,NOT_STARTED,,False
+REQ029,P004,Synthetic Requirement 29,Documentation,Medium,APPROVED,2026-01-01,2026-06-01,1,,,NOT_STARTED,,False
+REQ030,P003,Synthetic Requirement 30,Thermal,Medium,OPEN,2026-01-01,2026-06-01,1,TC028,,NOT_STARTED,,False
+REQ031,P002,Synthetic Requirement 31,Mechanical,Medium,OPEN,2026-01-01,2026-06-01,1,TC016,,NOT_STARTED,,False
+REQ032,P003,Synthetic Requirement 32,Control,Medium,DRAFT,2026-01-01,2026-06-01,1,TC022,,NOT_STARTED,,False
+REQ033,P001,Synthetic Requirement 33,Thermal,Medium,APPROVED,2026-01-01,2026-06-01,1,TC029,,NOT_STARTED,,False
+REQ999,P001,System failsafe safety requirement,Safety,Critical,APPROVED,2026-01-01,2026-01-01,0,TC999,SAF-001,VERIFIED,ASIL-D,FALSE

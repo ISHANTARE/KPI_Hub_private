@@ -1,0 +1,27 @@
+DESIGN_REVIEW_ID,PROJECT_ID,REVIEW_TYPE,REVIEW_DATE,DESIGN_PHASE,STATUS,OPEN_ACTIONS,CLOSED_ACTIONS,ACTION_COMPLETION_PCT,ATTENDEES,LEAD_REVIEWER,NEXT_REVIEW_DATE,NOTES
+DR001,P001,System Design Review,2026-03-20,System Architecture,COMPLETED,0,18,100%,5 team members,John Smith,2026-04-01,All actions resolved
+DR002,P001,Thermal Design Review,2026-04-15,Detailed Design,IN_PROGRESS,8,12,60%,4 team members,Maria Garcia,2026-05-15,8 open actions pending
+DR003,P001,Control System Design Review,2026-04-20,Detailed Design,COMPLETED,0,15,100%,3 team members,Sarah Williams,2026-05-20,Ready for integration
+DR004,P001,Mechanical Design Review,2026-04-25,Detailed Design,IN_PROGRESS,6,10,62%,2 team members,Tech Resource Pool,2026-06-01,6 actions pending
+DR005,P001,Integration Design Review,2026-05-15,Integration,IN_PROGRESS,5,8,62%,4 team members,John Smith,2026-06-15,System level analysis ongoing
+DR006,P002,Motor Design Review,2026-03-15,Detailed Design,COMPLETED,1,14,93%,3 team members,David Chen,2026-04-15,Minor design margin issue
+DR007,P002,Electrical Design Review,2026-03-20,Detailed Design,IN_PROGRESS,7,10,59%,3 team members,Sarah Williams,2026-05-20,EMI/EMC concerns flagged
+DR008,P002,Control System Design Review,2026-03-25,Detailed Design,COMPLETED,0,12,100%,3 team members,David Chen,2026-04-25,Complete for next phase
+DR009,P002,Integration Design Review,2026-05-01,Integration,BLOCKED,10,5,33%,2 team members,Sarah Williams,2026-06-01,CAN bus redesign impacts
+DR010,P003,Safety System Design Review,2026-04-15,Detailed Design,BLOCKED,12,3,20%,2 team members,Patricia Williams,2026-06-15,Consultant delay
+DR011,P003,Requirements Design Review,2026-05-01,Preliminary,IN_PROGRESS,8,4,33%,2 team members,Patricia Williams,2026-05-15,ASIL analysis ongoing
+DR012,P003,Safety Architecture Review,2026-05-15,System Design,PLANNED,0,0,0%,2 team members,Patricia Williams,2026-06-15,Pending consultant
+DR013,P004,Legacy System Design Review,2026-02-01,System,COMPLETED,0,10,100%,2 team members,Jennifer Lee,2026-03-01,Completed successfully
+DR014,P004,Data Migration Design Review,2026-02-10,Detailed Design,COMPLETED,1,12,92%,2 team members,Jennifer Lee,2026-03-10,Completed
+DR015,P005,Cybersecurity Design Review,2026-05-01,System Security,IN_PROGRESS,6,8,57%,2 team members,Robert Johnson,2026-06-01,Design analysis in progress
+DR005,P001,First Article Inspection Ready Review,2026-05-28,FAI Readiness,SCHEDULED,TBD,TBD,TBD,"Maria Garcia, Supplier Reps","Maria Garcia",2026-06-15,"FAI readiness; scheduled after prototype build completion"
+DR006,P002,Software Architecture Review,2026-03-05,System Architecture,COMPLETED,0,22,100%,"David Chen, Sarah Williams, Robert Johnson","David Chen",2026-03-20,"Architecture approved; coding standards established"
+DR007,P002,Code Review Phase 1,2026-04-15,Coding,IN_PROGRESS,15,45,75%,"Sarah Williams, David Chen, Lisa Anderson","Sarah Williams",2026-05-01,"15 open code review items; mostly style and documentation"
+DR008,P002,Code Review Phase 2,2026-05-10,Coding,IN_PROGRESS,8,52,87%,"Sarah Williams, David Chen, Lisa Anderson","Sarah Williams",2026-05-25,"Final code review before FAT; 8 items under review"
+DR009,P002,Factory Acceptance Test Readiness,2026-05-20,Integration,COMPLETED,0,8,100%,"David Chen, Sarah Williams, Michael Brown","David Chen",2026-05-20,"FAT readiness confirmed; test execution started 2026-05-22"
+DR010,P003,Safety Concept Review,2026-04-05,Safety Analysis,COMPLETED,0,12,100%,"Patricia Williams, John Smith, David Chen","Patricia Williams",2026-04-20,"Safety concept approved; ASIL decomposition to follow"
+DR011,P003,ASIL Decomposition Review,2026-05-15,Safety Analysis,BLOCKED,0,0,0%,"Patricia Williams, External Consultant","External Consultant",TBD,"Blocked waiting for consultant onboarding; scheduled 2026-05-25"
+DR012,P003,FMEA Review,2026-05-28,Safety Analysis,BLOCKED,12,0,0%,"Patricia Williams, Michael Brown","Patricia Williams",2026-06-10,"FMEA incomplete; 12 failure modes not analyzed (D010 related); revised schedule TBD"
+DR013,P004,Data Migration Approach Review,2026-02-15,Planning,COMPLETED,0,8,100%,"Jennifer Lee, John Smith","John Smith",2026-03-01,"Migration approach approved; ETL scripts validated"
+DR014,P005,Security Architecture Review,2026-04-05,System Architecture,COMPLETED,0,16,100%,"Robert Johnson, Lisa Anderson, John Smith","Robert Johnson",2026-04-20,"Security architecture approved; threat model development started"
+DR015,P005,Threat Modeling Review,2026-05-10,Security Analysis,IN_PROGRESS,5,18,78%,"Robert Johnson, Lisa Anderson","Robert Johnson",2026-05-25,"5 additional threat scenarios identified; risk assessment pending"

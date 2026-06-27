@@ -1,0 +1,22 @@
+DEFECT_ID,PROJECT_ID,TITLE,DESCRIPTION,SEVERITY,STATUS,FOUND_DATE,FIXED_DATE,DAYS_OPEN,ROOT_CAUSE,ASSIGNED_TO,COMPONENT,VERIFICATION_STATUS
+D001,P001,Thermal Simulation Mismatch,Compressor outlet temperature 5C higher than predicted,CRITICAL,OPEN,2026-05-10,N/A,20,Design assumption error,Maria Garcia,Compressor Design,PENDING_VERIFICATION
+D002,P001,Control Algorithm Instability,Boost pressure oscillates at idle conditions,CRITICAL,OPEN,2026-05-12,N/A,18,Feedback loop tuning error,Sarah Williams,Control Software,PENDING_FIX
+D003,P001,Mechanical Seal Leak,Compressor shaft seal shows oil seepage,HIGH,OPEN,2026-05-15,N/A,15,Seal material incompatibility,Tech Resource Pool,Mechanical Assembly,IN_PROGRESS
+D004,P001,Documentation Incomplete,Design specification missing tolerance analysis,HIGH,OPEN,2026-05-18,N/A,12,Process gap in review,Maria Garcia,Documentation,NOT_STARTED
+D005,P001,Test Data Inconsistency,Dyno test results differ from vehicle integration data,MEDIUM,OPEN,2026-05-20,N/A,8,Measurement calibration drift,Michael Brown,Test Equipment,INVESTIGATING
+D006,P001,Supplier Component Substitution,Bearing supplier changed material lot,MEDIUM,IN_PROGRESS,2026-05-08,2026-05-25,22,Supplier quality deficiency,John Smith,Supply Chain,RESOLVED
+D007,P002,Motor Winding Insulation,High voltage stress at 800V causing degradation,CRITICAL,OPEN,2026-05-14,N/A,16,Design oversight,David Chen,Motor Design,PENDING_VERIFICATION
+D008,P002,CAN Bus Timeout,Vehicle communication loss under EMI conditions,HIGH,IN_PROGRESS,2026-05-16,2026-05-27,14,Insufficient shielding,Sarah Williams,Electrical Integration,TESTING
+D009,P002,UI Responsiveness,Touchscreen lag over 500ms under heavy load,MEDIUM,FIXED,2026-05-19,2026-05-26,7,Software optimization needed,Sarah Williams,User Interface,VERIFIED
+D010,P001,Vibration Resonance,Compressor exhibits resonance at 4500 RPM,HIGH,OPEN,2026-05-22,N/A,8,Mounting bracket design issue,Maria Garcia,Mechanical Assembly,INVESTIGATING
+D011,P002,Software Memory Leak,Memory consumption increases over time,MEDIUM,IN_PROGRESS,2026-05-18,2026-05-29,11,Code optimization required,Sarah Williams,Software,TESTING
+D012,P003,Safety System Latency,System response time exceeds specification,HIGH,OPEN,2026-05-21,N/A,9,Algorithm complexity,Patricia Williams,Safety Module,ANALYZING
+D013,P001,Power Supply Ripple,Power supply ripple exceeds limits at high current,MEDIUM,IN_PROGRESS,2026-05-19,N/A,11,Component selection,John Smith,Power Electronics,INVESTIGATING
+D014,P002,Communication Protocol Bug,CAN message misinterpretation under edge cases,MEDIUM,OPEN,2026-05-17,N/A,13,Protocol specification ambiguity,Sarah Williams,Networking,ANALYZING
+D015,P003,Functional Safety Gap,Coverage insufficient for ASIL B requirement,CRITICAL,OPEN,2026-05-20,N/A,10,Incomplete analysis,Patricia Williams,Safety,PENDING_ANALYSIS
+D010,P003,FMEA Gap,Functional safety analysis missing 12 failure modes,CRITICAL,OPEN,2026-05-12,N/A,18,Incomplete ASIL decomposition,Patricia Williams,Safety Engineering,NOT_STARTED
+D011,P003,Test Case Traceability,8 test cases don't map to safety requirements,HIGH,IN_PROGRESS,2026-05-17,2026-05-29,13,Requirements changed post-baseline,Michael Brown,Testing,COMPLETING
+D012,P004,Legacy Database Corruption,Historical data loss in final migration,HIGH,FIXED,2026-03-15,2026-04-05,21,Incomplete data validation during ETL process,Jennifer Lee,Data Migration,VERIFIED
+D013,P005,Weak Cryptography,Algorithm uses MD5 for data integrity (not FIPS 140-2 compliant),CRITICAL,IN_PROGRESS,2026-05-01,2026-06-15,60,Legacy code reuse; upgrade to SHA-256 in progress,Robert Johnson,Security Module,IN_PROGRESS
+D014,P005,SSL Certificate Validation,Code doesn't verify certificate chain expiry,HIGH,OPEN,2026-05-09,N/A,21,Missing validation logic in TLS handshake,Lisa Anderson,Security Module,DESIGNING_FIX
+D015,P005,Input Validation,SQL injection vulnerability in admin panel,CRITICAL,FIXED,2026-05-05,2026-05-22,17,Parameterized queries implemented,Robert Johnson,Backend Security,VERIFIED
