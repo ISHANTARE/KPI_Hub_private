@@ -335,6 +335,18 @@ Validation activities and customer acceptance.
 | APPROVED_BY | String | Approval authority | Name or N/A | N/A |
 | NOTES | String | Status notes | 1-500 chars | "Customer validation planned for Q3" |
 
+#### action_log.csv (data/projects/action_log.csv)
+Project action item tracking log for PMO Action Closure Rate calculation.
+
+| Field | Type | Description | Format/Range | Example |
+|-------|------|-------------|--------------|---------|
+| ACTION_ID | String | Unique action item ID | ACT[001-999] | ACT-001 |
+| PROJECT_ID | String | Parent project ID | P[001-999] | P001 |
+| DESCRIPTION | String | Action item description | 1-200 chars | Review thermal simulation results |
+| STATUS | String | Action completion status | Completed, Done, Open, In Progress | Completed |
+| OWNER | String | Action owner / assignee | Resource Role / Name | Engineering Manager |
+| DUE_DATE | Date | Action deadline | YYYY-MM-DD | 2026-05-15 |
+
 ---
 
 ## Data Quality Rules
