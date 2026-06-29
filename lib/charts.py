@@ -316,14 +316,17 @@ def build_test_execution_chart(
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _parse_util_pct(val) -> float:
-    """Parse a UTILIZATION_PCT string like '95%' or '118%' to float. Returns 100.0 on failure."""
+    """Parse a UTILIZATION_PCT string like '95%' or '118%' to float. Returns 0.0 on failure."""
     try:
+        if pd.isna(val) or val is None:
+            return 0.0
         s = str(val).replace("%", "").replace(">", "").strip()
         if "(" in s:
             s = s.split("(")[1].replace(")", "")
         return float(s)
-    except Exception:
-        return 100.0
+    except Exception as e:
+        logger.warning(f"Could not parse utilization percentage '{val}': {e}")
+        return 0.0
 
 
 def build_resource_utilization_chart(

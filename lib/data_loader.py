@@ -284,6 +284,7 @@ def load_data():
         dev_metrics = load_dataframe_from_db("dev_metrics")
         design_reviews = load_dataframe_from_db("design_reviews")
         verification = load_dataframe_from_db("verification")
+        org_mapping = load_dataframe_from_db("org_mapping")
 
         if ecrs.empty:
             ecrs = pd.DataFrame(columns=['ECR_ID', 'PROJECT_ID', 'TITLE', 'STATUS', 'CHANGE_TYPE', 'IMPACT_SCHEDULE_DAYS', 'IMPACT_COST'])
@@ -321,6 +322,7 @@ def load_data():
             'audit_log': audit_log,
             'decisions': decisions,
             'defect_trends': defect_trends,
+            'org_mapping': org_mapping,
         }
     except Exception as e:
         st.error(f"Error loading data: {e}")

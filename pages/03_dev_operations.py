@@ -27,11 +27,7 @@ if data is None:
     st.stop()
 
 # Scope filter
-org_df = pd.DataFrame()
-try:
-    org_df = pd.read_csv('data/resources/org_mapping.csv')
-except Exception:
-    pass
+org_df = data.get('org_mapping', pd.DataFrame())
 data = apply_scope_filter(
     data,
     st.session_state.get('current_manager', 'All'),

@@ -77,6 +77,7 @@ def sync_all_csvs_to_db(force: bool = False):
         "dev_metrics": data_dir / "metrics" / "development_metrics.csv",
         "design_reviews": data_dir / "metrics" / "design_reviews.csv",
         "verification": data_dir / "metrics" / "verification_activities.csv",
+        "org_mapping": data_dir / "resources" / "org_mapping.csv",
     }
 
     with engine.connect() as conn:
