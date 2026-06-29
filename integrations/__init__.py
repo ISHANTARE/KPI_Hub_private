@@ -1,26 +1,15 @@
 """
 KPI Hub Integrations Module
-Provides automated data synchronization from various project management and 
-test management tools to the KPI Hub dashboard.
+Provides automated data synchronization from core ALM and messaging tools to KPI Hub.
 
-Supported Integrations:
-- Codebeamer - Requirements, test cases, defects
-- Jira - Issues, sprints, epics
-- Azure DevOps - Work items, test results
-- Monday.com - Project board tracking
-- Asana - Project management
-- Slack - Notifications
-- Email - Daily reports
-
-Usage:
-    from integrations.scheduler import IntegrationScheduler
-    
-    # Run continuous sync
-    scheduler = IntegrationScheduler()
-    scheduler.run()
-    
-    # Or run single sync
-    scheduler.run_once()
+Active Connectors:
+- Jira
+- Codebeamer
+- Email (SMTP/IMAP)
+- Microsoft Teams Webhook
+- GitHub
+- Slack
+- Outlook Calendar
 """
 
 from .codebeamer_sync import CodebeamerSync

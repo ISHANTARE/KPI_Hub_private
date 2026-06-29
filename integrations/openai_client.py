@@ -32,16 +32,35 @@ def _get_api_key() -> Optional[str]:
     return get_openai_api_key()
 
 
-def get_completion(prompt: str, model: str = "gpt-4o-mini", max_tokens: int = 512) -> Optional[str]:
+def sanitize_prompt(text: str, max_chars: int = 12000) -> str:
+    """Sanitize and truncate prompt input to prevent excessive token usage or overflow."""
+    if not text:
+        return ""
+    return str(text)[:max_chars]
+
+
+def get_completion(
+    prompt: str, 
+    model: str = "gpt-4o-mini", 
+    max_tokens: int = 512, 
+    system_prompt: Optional[str] = "You are an AI assistant for an engineering PMO dashboard."
+) -> Optional[str]:
     """Return a text completion for `prompt` or None on failure.
 
-    - If the `openai` package is installed, it will be used.
-    - Otherwise the function attempts a direct HTTP call using `requests`.
+    - Supports separate system and user prompts.
+    - Truncates raw inputs for safety.
+    - Uses official `openai` SDK or falls back to direct `requests`.
     """
     api_key = _get_api_key()
     if not api_key:
         logger.error("OpenAI API key not found; set OPENAI_API_KEY in environment or .env")
         return None
+
+    clean_prompt = sanitize_prompt(prompt)
+    messages = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": clean_prompt})
 
     # Prefer official package
     if openai is not None:
@@ -49,7 +68,7 @@ def get_completion(prompt: str, model: str = "gpt-4o-mini", max_tokens: int = 51
             client = openai.OpenAI(api_key=api_key)
             resp = client.chat.completions.create(
                 model=model,
-                messages=[{"role": "user", "content": prompt}],
+                messages=messages,
                 max_tokens=max_tokens,
             )
             return resp.choices[0].message.content
@@ -69,7 +88,7 @@ def get_completion(prompt: str, model: str = "gpt-4o-mini", max_tokens: int = 51
         }
         payload: Dict[str, Any] = {
             "model": model,
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": messages,
             "max_tokens": max_tokens,
         }
         r = requests.post(url, headers=headers, data=json.dumps(payload), timeout=30)

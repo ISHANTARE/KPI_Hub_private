@@ -14,11 +14,11 @@ from pathlib import Path
 from datetime import datetime
 from integrations.codebeamer_sync import CodebeamerSync
 from integrations.jira_sync import JiraSync
-from integrations.azure_devops_sync import AzureDevOpsSync
-from integrations.monday_sync import MondaySync
-from integrations.asana_sync import AsanaSync
 from integrations.slack_notify import SlackNotifier
 from integrations.email_notify import EmailNotifier
+from integrations.github_sync import GitHubSync
+from integrations.teams_notify import TeamsNotifier
+from integrations.outlook_calendar_sync import OutlookCalendarSync
 from integrations.config_helper import load_config
 
 # Setup logging (must be before any logger usage)
@@ -36,27 +36,15 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# New Integrations (optional — failures are non-fatal)
-try:
-    from integrations.github_sync import GitHubSync
-    from integrations.teams_notify import TeamsNotifier
-    from integrations.confluence_sync import ConfluenceSync
-    from integrations.sharepoint_sync import SharePointSync
-    from integrations.powerbi_helper import PowerBIEmbedHelper
-    from integrations.polarion_doors_sync import PolarionDoorsSync
-    from integrations.test_mgmt_sync import TestManagementSync
-    from integrations.outlook_calendar_sync import OutlookCalendarSync
-    from integrations.kb_rag_sync import KnowledgeBaseSync
-except ImportError as e:
-    logger.warning(f"Optional integration import skipped: {e}")
-
 
 class IntegrationScheduler:
-    """Manages scheduled syncs from various data sources"""
+    """Manages scheduled syncs from active core data sources"""
     
     def __init__(self, config_path: str = "integrations/config.yaml"):
         """Initialize scheduler with configuration"""
+        self.config_path = config_path
         self.config = self._load_config(config_path)
+        
         # Try to import schedule module; scheduling features are optional for --once runs
         try:
             import schedule as schedule_module
@@ -66,62 +54,58 @@ class IntegrationScheduler:
             logger.warning("`schedule` package not available; continuous scheduling disabled")
             self.schedule = None
             self._schedule_enabled = False
-        self.codebeamer = CodebeamerSync(config_path)
-        self.jira = JiraSync(config_path)
-        # Optional integrations
-        try:
-            self.azure_devops = AzureDevOpsSync(config_path)
-        except Exception:
-            self.azure_devops = None
 
-        try:
-            self.monday = MondaySync(config_path)
-        except Exception:
-            self.monday = None
+        # Lazy connectors (initialized on demand or sync execution)
+        self._jira = None
+        self._codebeamer = None
+        self._github = None
+        self._teams = None
+        self._slack = None
+        self._email = None
+        self._outlook = None
 
-        try:
-            self.asana = AsanaSync(config_path)
-        except Exception:
-            self.asana = None
+    @property
+    def jira(self):
+        if self._jira is None:
+            self._jira = JiraSync(self.config_path)
+        return self._jira
 
-        # New integrations
-        try: self.github = GitHubSync(config_path)
-        except Exception: self.github = None
+    @property
+    def codebeamer(self):
+        if self._codebeamer is None:
+            self._codebeamer = CodebeamerSync(self.config_path)
+        return self._codebeamer
 
-        try: self.teams = TeamsNotifier(config_path)
-        except Exception: self.teams = None
+    @property
+    def github(self):
+        if self._github is None:
+            self._github = GitHubSync(self.config_path)
+        return self._github
 
-        try: self.confluence = ConfluenceSync(config_path)
-        except Exception: self.confluence = None
+    @property
+    def teams(self):
+        if self._teams is None:
+            self._teams = TeamsNotifier(self.config_path)
+        return self._teams
 
-        try: self.sharepoint = SharePointSync(config_path)
-        except Exception: self.sharepoint = None
+    @property
+    def slack(self):
+        if self._slack is None:
+            self._slack = SlackNotifier(self.config_path)
+        return self._slack
 
-        try: self.powerbi = PowerBIEmbedHelper(config_path)
-        except Exception: self.powerbi = None
+    @property
+    def email(self):
+        if self._email is None:
+            self._email = EmailNotifier(self.config_path)
+        return self._email
 
-        try: self.polarion_doors = PolarionDoorsSync(config_path)
-        except Exception: self.polarion_doors = None
+    @property
+    def outlook(self):
+        if self._outlook is None:
+            self._outlook = OutlookCalendarSync(self.config_path)
+        return self._outlook
 
-        try: self.test_management = TestManagementSync(config_path)
-        except Exception: self.test_management = None
-
-        try: self.outlook_calendar = OutlookCalendarSync(config_path)
-        except Exception: self.outlook_calendar = None
-
-        try: self.knowledge_base = KnowledgeBaseSync(config_path)
-        except Exception: self.knowledge_base = None
-
-        # Notification helpers
-        try:
-            self.slack = SlackNotifier(config_path)
-        except Exception:
-            self.slack = None
-
-        try:
-            self.email = EmailNotifier(config_path)
-        except Exception:
-            self.email = None
         # Only configure scheduled jobs if schedule is available
         if self._schedule_enabled:
             self._schedule_jobs()
