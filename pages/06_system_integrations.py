@@ -27,16 +27,7 @@ render_page_header(
     "Local data files, configured integration endpoints, and sync controls.",
 )
 
-# ── Helper: log data edits ───────────────────────────────────────────────────
-def log_data_edit(role, file_path):
-    log_file = Path('data/resources/data_edit_log.csv')
-    if not log_file.exists():
-        log_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(log_file, 'w', encoding='utf-8') as f:
-            f.write("TIMESTAMP,ROLE,FILE_EDITED,ACTION\n")
-    with open(log_file, 'a', encoding='utf-8') as f:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        f.write(f"{timestamp},{role},{file_path},File Saved\n")
+from lib.audit import log_data_edit
 
 # ── Refresh control ──────────────────────────────────────────────────────────
 if st.button("Refresh data list"):

@@ -19,17 +19,7 @@ from lib.styling import render_page_header, badge, severity_badge, COLORS, STATU
 from lib.sidebar import apply_scope_filter
 
 
-def _log_data_edit(role: str, file_path: str) -> None:
-    """Append one audit row to data/resources/data_edit_log.csv."""
-    log_file = Path('data/resources/data_edit_log.csv')
-    if not log_file.exists():
-        log_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(log_file, 'w', encoding='utf-8') as f:
-            f.write("TIMESTAMP,ROLE,FILE_EDITED,ACTION\n")
-    with open(log_file, 'a', encoding='utf-8') as f:
-        f.write(
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')},{role},{file_path},File Saved\n"
-        )
+from lib.audit import log_data_edit as _log_data_edit
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
