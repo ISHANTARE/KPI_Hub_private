@@ -119,6 +119,7 @@ with st.expander("✨ Generate AI Narrative for these observations"):
             if ai_narrative:
                 st.markdown(ai_narrative)
             else:
+                st.warning("⚠️ **Synthesized Offline Analysis Generated**: External AI service is unavailable (verify `OPENAI_API_KEY` in `.env`). Showing rule-synthesized local analytical report below.")
                 st.markdown("### Executive Narrative (Synthesized)")
                 st.markdown(
                     "• **Portfolio Status Watch**: Overall portfolio health stands at 74.7%, requiring close monitoring of slippages in key milestones.\n"
