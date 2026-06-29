@@ -90,16 +90,17 @@ def compute_pm_kpis(data: dict) -> dict:
                 except Exception:
                     pass
 
-        # Action closure rate: from data/projects/action_log.csv
-        action_paths = [Path('data') / 'projects' / 'action_log.csv', Path('data') / 'actions.csv']
-        actions_df = None
-        for p in action_paths:
-            if p.exists():
-                try:
-                    actions_df = pd.read_csv(p)
-                    break
-                except Exception:
-                    actions_df = None
+        # Action closure rate: from data dictionary or action_log.csv
+        actions_df = data.get('actions') if data else None
+        if actions_df is None or actions_df.empty:
+            action_paths = [Path('data') / 'projects' / 'action_log.csv', Path('data') / 'actions.csv']
+            for p in action_paths:
+                if p.exists():
+                    try:
+                        actions_df = pd.read_csv(p)
+                        break
+                    except Exception:
+                        actions_df = None
         if actions_df is not None and len(actions_df) > 0:
             status_col = next((c for c in actions_df.columns if c.lower() in ['status','state']), None)
             if status_col:

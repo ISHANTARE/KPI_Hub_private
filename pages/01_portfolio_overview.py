@@ -221,10 +221,29 @@ with st.expander("Generate One-Click Weekly Governance Report"):
 - Critical Risks: {kpis['critical_risks']}
 - Test Pass Rate: {kpis['test_pass_rate']:.1f}%
             """
-    st.markdown("Report generated. Review below or download for distribution.")
-    st.code(report_md, language="markdown")
+    st.markdown("Report generated. Review below or download for executive distribution.")
+    st.markdown(f"""
+    <div style="background-color: var(--card_bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin: 10px 0;">
+        <h3 style="margin-top:0; color:var(--text_primary);">Weekly Executive Governance Report</h3>
+        <p style="color:var(--text_muted); font-size:12px;">Generated: {now.strftime('%Y-%m-%d %H:%M')}</p>
+        <hr style="border-color:var(--border);">
+        <h4 style="color:var(--text_primary);">Executive Summary</h4>
+        <ul>
+            <li><strong>Overdue High/Critical Risks:</strong> {overdue_high_risks}</li>
+            <li><strong>Projects failing ASPICE targets:</strong> {poor_aspice_projects}</li>
+            <li><strong>Bottlenecked Decisions:</strong> {pending_decisions}</li>
+        </ul>
+        <h4 style="color:var(--text_primary);">Portfolio Operational Metrics</h4>
+        <ul>
+            <li><strong>Active Projects:</strong> {kpis['active_components']}</li>
+            <li><strong>Critical Risks:</strong> {kpis['critical_risks']}</li>
+            <li><strong>Test Pass Rate:</strong> {kpis['test_pass_rate']:.1f}%</li>
+            <li><strong>Computed Release Readiness:</strong> {kpis['release_readiness']:.1f}%</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
     st.download_button(
-        "Download Report (.md)",
+        "Download Executive Report (.md)",
         data=report_md,
         file_name=f"Governance_Report_{now.strftime('%Y%m%d')}.md",
         mime="text/markdown",
@@ -255,28 +274,22 @@ st.divider()
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("#### Readiness Breakdown")
+    st.markdown("#### Portfolio Release Readiness")
     base_maturity = kpis['portfolio_health']
-
-    # Risk penalty: -1% per critical risk, -0.5% per high risk (capped at -20%)
-    _n_critical = int(kpis.get('critical_risks', 0))
-    _n_high     = int(kpis.get('high_risks', 0))
-    risk_penalty = max(-20.0, -(_n_critical * 1.0 + _n_high * 0.5))
-    final_readiness = base_maturity + risk_penalty
+    final_readiness = kpis['release_readiness']
 
     col1a, col1b = st.columns(2)
     with col1a:
-        st.metric("Base Maturity", f"{base_maturity:.1f}%")
+        st.metric("Base Health", f"{base_maturity:.1f}%")
     with col1b:
         st.metric(
-            "Risk Penalty",
-            f"{risk_penalty:.1f}%",
-            delta=risk_penalty,
-            help=f"{_n_critical} critical × 1% + {_n_high} high × 0.5%",
+            "Release Readiness",
+            f"{final_readiness:.1f}%",
+            help="Computed via KPI Engine combining portfolio health, test pass rate, resource overallocation penalties, and traceability gap weights."
         )
 
     st.progress(min(100, max(0, int(final_readiness))) / 100)
-    st.caption(f"Final Readiness: {final_readiness:.1f}%")
+    st.caption(f"Engine Release Readiness Score: {final_readiness:.1f}%")
 
     readiness_categories = ['Design', 'Test', 'Requirements', 'Verification']
 

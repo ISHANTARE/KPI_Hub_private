@@ -35,11 +35,41 @@ def read_root():
 
 @app.get("/health", response_model=HealthResponse, tags=["General"])
 def health_check():
+    try:
+        from lib.database import get_engine
+        from sqlalchemy import text
+        engine = get_engine()
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        db_status = "connected"
+    except Exception as e:
+        logger.error(f"DB ping failed: {e}")
+        db_status = "disconnected"
+
     return {
-        "status": "healthy",
+        "status": "healthy" if db_status == "connected" else "degraded",
         "version": "1.0.0",
-        "database": "connected"
+        "database": db_status
     }
+
+@app.get("/api/v1/metrics", tags=["Metrics"])
+def get_portfolio_metrics():
+    """Retrieve computed portfolio-level KPIs and penalty metrics."""
+    try:
+        from lib.data_loader import load_data
+        from lib.kpi_engine import calculate_kpis, compute_pm_kpis
+        data = load_data()
+        if not data:
+            raise HTTPException(status_code=500, detail="Data loading failed.")
+        kpis = calculate_kpis(data)
+        pm_kpis = compute_pm_kpis(data)
+        return {
+            "portfolio_kpis": kpis,
+            "pm_kpis": pm_kpis
+        }
+    except Exception as e:
+        logger.exception(f"API Error fetching metrics: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error retrieving metrics.")
 
 @app.get("/api/v1/projects", response_model=List[ProjectStatusSummary], tags=["Projects"])
 def get_projects(limit: int = Query(50, ge=1, le=500)):

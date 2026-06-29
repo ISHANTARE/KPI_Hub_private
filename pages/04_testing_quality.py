@@ -45,6 +45,20 @@ render_page_header(
 defects = data.get('defects', pd.DataFrame())
 tests = data.get('tests', pd.DataFrame())
 
+# ── Quality KPI Summary Row ───────────────────────────────────────────────────
+qc1, qc2, qc3, qc4 = st.columns(4)
+with qc1:
+    st.metric("Quality Score", f"{kpis.get('quality_score', 0):.0f} / 100", help="Computed inverse defect density metric")
+with qc2:
+    st.metric("Test Pass Rate", f"{kpis.get('test_pass_rate', 0):.1f}%")
+with qc3:
+    crit_def = len(defects[defects['SEVERITY'] == 'CRITICAL']) if not defects.empty and 'SEVERITY' in defects.columns else 0
+    st.metric("Critical Defects", crit_def, delta=crit_def, delta_color="inverse")
+with qc4:
+    st.metric("Total Executed Tests", len(tests) if not tests.empty else 0)
+
+st.divider()
+
 # ── Weekly Defect Trend ───────────────────────────────────────────────────────
 st.markdown("#### Weekly Defect Trend")
 defect_trends = data.get('defect_trends', pd.DataFrame())

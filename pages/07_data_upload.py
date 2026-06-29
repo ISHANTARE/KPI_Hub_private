@@ -91,10 +91,11 @@ if uploaded_file is not None:
                     elif table_name == "resource_allocation": table_name = "resources"
                     elif table_name == "aspice_status": table_name = "aspice"
                     elif table_name == "test_execution": table_name = "tests"
-                    elif table_name == "development_metrics": table_name = "dev_metrics"
+                    from lib.database import save_dataframe_to_db, sync_all_csvs_to_db
                     save_dataframe_to_db(table_name, uploaded_df, if_exists="replace")
+                    sync_all_csvs_to_db(force=True)
 
-                    st.success(f"Successfully updated {filename}, synced to DB, and archived to {archive_path.name}!")
+                    st.success(f"Successfully updated {filename}, synced to SQLite DB, and archived!")
                     st.cache_data.clear()
         else:
             if st.button(f"Save as New File {filename}", type="primary"):

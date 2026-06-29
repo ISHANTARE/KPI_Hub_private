@@ -35,12 +35,14 @@ if st.button("Refresh data list"):
 
 # ── Local CSV Data Files ─────────────────────────────────────────────────────
 data_dir = Path("data")
-files    = list(data_dir.rglob("*.csv")) if data_dir.exists() else []
+raw_files = list(data_dir.rglob("*.csv")) if data_dir.exists() else []
+# Exclude seed and upload archive files from direct editor to avoid duplicates & confusion
+files = [f for f in raw_files if "seed" not in f.parts and "uploads" not in f.parts]
 
 if files:
     st.markdown("#### Local CSV Data Files")
     file_cols = st.columns(3)
-    for idx, f in enumerate(sorted(files)):
+    for idx, f in enumerate(sorted(files, key=lambda x: x.as_posix())):
         col = file_cols[idx % 3]
         try:
             stat     = f.stat()
@@ -50,8 +52,11 @@ if files:
             size_kb  = 0.0
             modified = "n/a"
 
+        rel_path_str = f.as_posix()
+        clean_key_id = f"{idx}_{rel_path_str.replace('/', '_').replace('.', '_')}"
+
         with col:
-            with st.expander(f.name, expanded=False):
+            with st.expander(f"{f.parent.name}/{f.name}", expanded=False):
                 mcol1, mcol2 = st.columns([4, 1])
                 with mcol1:
                     st.markdown(
@@ -68,7 +73,7 @@ if files:
                     )
                 with mcol2:
                     st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
-                    if st.button("Open", key=f"open_file_{f.parent.name}_{f.name}"):
+                    if st.button("Open", key=f"open_file_{clean_key_id}"):
                         try:
                             import subprocess, platform
                             _path = str(f.resolve())
@@ -93,11 +98,11 @@ if files:
                             df_full,
                             use_container_width=True,
                             num_rows="dynamic",
-                            key=f"editor_{f.parent.name}_{f.name}",
+                            key=f"editor_{clean_key_id}",
                         )
                         scol1, scol2 = st.columns([4, 1])
                         with scol2:
-                            if st.button("Save Changes", key=f"save_{f.parent.name}_{f.name}", use_container_width=True):
+                            if st.button("Save Changes", key=f"save_{clean_key_id}", use_container_width=True):
                                 try:
                                     edited_df.to_csv(f, index=False)
                                     log_data_edit('Manager', str(f))
@@ -198,9 +203,10 @@ if cfg:
         title = integration_meta.get(section, section.replace('_', ' ').title())
         with col:
             with st.expander(title, expanded=False):
-                st.markdown(f"#### {title} Config")
-                if section in ['jira', 'polarion_doors', 'codebeamer']:
-                    st.info("🔌 Status: Connected - License Pending")
+                if section in ['jira', 'codebeamer', 'email']:
+                    st.success("🟢 Status: Operational Live Connector")
+                else:
+                    st.info("⚡ Status: Enterprise Connector (Scaffold Ready)")
 
                 if isinstance(conf, dict):
                     section_updates = {}

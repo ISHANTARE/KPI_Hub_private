@@ -215,10 +215,13 @@ _SCHEMAS: dict[str, list[str]] = {
     "org_mapping": [
         "MANAGER_NAME", "PROJECT_ID", "TEAM_MEMBER", "ROLE", "EMAIL", "TEAMS_ID",
     ],
+    "actions": [
+        "ACTION_ID", "PROJECT_ID", "DESCRIPTION", "STATUS", "OWNER", "DUE_DATE",
+    ],
 }
 
-assert len(_SCHEMAS) == 23, (
-    f"Expected 23 keys in _SCHEMAS, got {len(_SCHEMAS)}: {sorted(_SCHEMAS)}"
+assert len(_SCHEMAS) == 24, (
+    f"Expected 24 keys in _SCHEMAS, got {len(_SCHEMAS)}: {sorted(_SCHEMAS)}"
 )
 
 

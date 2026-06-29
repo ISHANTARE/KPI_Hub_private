@@ -15,26 +15,26 @@ from lib.data_loader import (
     compute_traceability_insights,
 )
 
-# ── Expected 23-key contract ──────────────────────────────────────────────────
-EXPECTED_23_KEYS = {
+# ── Expected 24-key contract ──────────────────────────────────────────────────
+EXPECTED_24_KEYS = {
     "projects", "milestones", "budget", "risks", "resources",
     "monthly_utilization", "cost_rates", "defects", "tests",
     "requirements", "issues", "escalations", "aspice", "ecrs",
     "dev_metrics", "design_reviews", "verification",
     "traceability_insights", "forecast", "audit_log",
-    "decisions", "defect_trends", "org_mapping",
+    "decisions", "defect_trends", "org_mapping", "actions",
 }
 
 
-# ── Test: load_data() returns the complete 23-key contract ────────────────────
+# ── Test: load_data() returns the complete 24-key contract ────────────────────
 
-def test_load_data_returns_23_keys():
-    """Req 3.2, 10.2 — load_data() must return exactly 23 keys."""
+def test_load_data_returns_24_keys():
+    """Req 3.2, 10.2 — load_data() must return exactly 24 keys."""
     result = load_data()
     assert result is not None, "load_data() returned None — critical data load failed"
-    assert set(result.keys()) == EXPECTED_23_KEYS, (
-        f"Key mismatch.\n  Missing: {EXPECTED_23_KEYS - set(result.keys())}\n"
-        f"  Extra:   {set(result.keys()) - EXPECTED_23_KEYS}"
+    assert set(result.keys()) == EXPECTED_24_KEYS, (
+        f"Key mismatch.\n  Missing: {EXPECTED_24_KEYS - set(result.keys())}\n"
+        f"  Extra:   {set(result.keys()) - EXPECTED_24_KEYS}"
     )
 
 

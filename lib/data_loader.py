@@ -56,6 +56,19 @@ def init_resource_cost_data():
         ]
         pd.DataFrame(default_rates).to_csv(cost_file, index=False)
 
+    # 1b. Initialize action_log.csv if missing
+    action_file = data_dir / "projects" / "action_log.csv"
+    if not action_file.exists():
+        action_file.parent.mkdir(parents=True, exist_ok=True)
+        default_actions = [
+            {"ACTION_ID": "ACT-001", "PROJECT_ID": "P001", "DESCRIPTION": "Review thermal simulation results", "STATUS": "Completed", "OWNER": "Engineering Manager", "DUE_DATE": "2026-05-15"},
+            {"ACTION_ID": "ACT-002", "PROJECT_ID": "P001", "DESCRIPTION": "Update safety case baseline", "STATUS": "Done", "OWNER": "Safety Engineer", "DUE_DATE": "2026-06-01"},
+            {"ACTION_ID": "ACT-003", "PROJECT_ID": "P002", "DESCRIPTION": "Validate motor controller firmware v2.1", "STATUS": "Open", "OWNER": "Controls Engineer", "DUE_DATE": "2026-07-10"},
+            {"ACTION_ID": "ACT-004", "PROJECT_ID": "P003", "DESCRIPTION": "Complete cybersecurity TARA audit", "STATUS": "Completed", "OWNER": "Security Architect", "DUE_DATE": "2026-06-20"},
+            {"ACTION_ID": "ACT-005", "PROJECT_ID": "P004", "DESCRIPTION": "Calibrate sensor fusion algorithm", "STATUS": "In Progress", "OWNER": "Senior Design Engineer", "DUE_DATE": "2026-07-30"}
+        ]
+        pd.DataFrame(default_actions).to_csv(action_file, index=False)
+
     # 2. Initialize monthly_utilization.csv if missing
     if not util_file.exists():
         util_file.parent.mkdir(parents=True, exist_ok=True)
@@ -285,6 +298,7 @@ def load_data():
         design_reviews = load_dataframe_from_db("design_reviews")
         verification = load_dataframe_from_db("verification")
         org_mapping = load_dataframe_from_db("org_mapping")
+        actions = load_dataframe_from_db("actions")
 
         if ecrs.empty:
             ecrs = pd.DataFrame(columns=['ECR_ID', 'PROJECT_ID', 'TITLE', 'STATUS', 'CHANGE_TYPE', 'IMPACT_SCHEDULE_DAYS', 'IMPACT_COST'])
@@ -296,6 +310,8 @@ def load_data():
             design_reviews = pd.DataFrame(columns=['PROJECT_ID', 'REVIEW_ID', 'STATUS', 'CRITICAL_ISSUES', 'ACTION_COMPLETION_PCT'])
         if verification.empty:
             verification = pd.DataFrame(columns=['VERIFICATION_ID', 'PROJECT_ID', 'STATUS', 'RESULT'])
+        if actions.empty and (data_dir / "projects" / "action_log.csv").exists():
+            actions = pd.read_csv(data_dir / "projects" / "action_log.csv")
 
         traceability_insights = compute_traceability_insights(requirements, tests)
 
@@ -323,6 +339,7 @@ def load_data():
             'decisions': decisions,
             'defect_trends': defect_trends,
             'org_mapping': org_mapping,
+            'actions': actions,
         }
     except Exception as e:
         st.error(f"Error loading data: {e}")
