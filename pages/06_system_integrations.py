@@ -79,8 +79,15 @@ if files:
                     st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
                     if st.button("Open", key=f"open_file_{f.parent.name}_{f.name}"):
                         try:
-                            import os as _os
-                            _os.startfile(str(f.resolve()))
+                            import subprocess, platform
+                            _path = str(f.resolve())
+                            if platform.system() == "Windows":
+                                import os as _os
+                                _os.startfile(_path)
+                            elif platform.system() == "Darwin":
+                                subprocess.Popen(["open", _path])
+                            else:
+                                subprocess.Popen(["xdg-open", _path])
                         except Exception as e:
                             st.error(f"Failed to open: {e}")
 

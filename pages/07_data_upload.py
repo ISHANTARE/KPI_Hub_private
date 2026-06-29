@@ -49,6 +49,16 @@ if uploaded_file is not None:
 
     try:
         uploaded_df = pd.read_csv(uploaded_file)
+        
+        # Pydantic Validation
+        from lib.models import MODEL_MAPPING, validate_dataframe
+        from lib.database import save_dataframe_to_db
+        
+        model_class = MODEL_MAPPING.get(filename)
+        if model_class:
+            valid_df, errors = validate_dataframe(uploaded_df, model_class)
+            if errors:
+                st.warning(f"Found {len(errors)} validation warnings (e.g. {errors[0]})")
 
         if target_path.exists():
             existing_df  = pd.read_csv(target_path)
@@ -62,14 +72,38 @@ if uploaded_file is not None:
             else:
                 if extra_cols:
                     st.warning(f"Note: Uploaded file contains extra columns that will be added: {list(extra_cols)}")
-                if st.button(f"Confirm & Overwrite {filename}"):
+                if st.button(f"Confirm & Overwrite {filename}", type="primary"):
+                    # Save runtime CSV
                     uploaded_df.to_csv(target_path, index=False)
-                    st.success(f"Successfully uploaded and replaced {target_path}!")
+                    
+                    # Archive upload
+                    archive_dir = Path("data") / "uploads"
+                    archive_dir.mkdir(parents=True, exist_ok=True)
+                    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                    archive_path = archive_dir / f"{target_path.stem}_{timestamp}.csv"
+                    uploaded_df.to_csv(archive_path, index=False)
+                    
+                    # Sync to SQLite DB
+                    table_name = target_path.stem
+                    if table_name == "projects_status": table_name = "projects"
+                    elif table_name == "budget_tracking": table_name = "budget"
+                    elif table_name == "risk_register": table_name = "risks"
+                    elif table_name == "resource_allocation": table_name = "resources"
+                    elif table_name == "aspice_status": table_name = "aspice"
+                    elif table_name == "test_execution": table_name = "tests"
+                    elif table_name == "development_metrics": table_name = "dev_metrics"
+                    save_dataframe_to_db(table_name, uploaded_df, if_exists="replace")
+
+                    st.success(f"Successfully updated {filename}, synced to DB, and archived to {archive_path.name}!")
                     st.cache_data.clear()
         else:
-            if st.button(f"Save as New File {filename}"):
+            if st.button(f"Save as New File {filename}", type="primary"):
                 target_path.parent.mkdir(parents=True, exist_ok=True)
                 uploaded_df.to_csv(target_path, index=False)
+                
+                table_name = target_path.stem
+                save_dataframe_to_db(table_name, uploaded_df, if_exists="replace")
+                
                 st.success(f"Successfully created and saved {target_path}!")
                 st.cache_data.clear()
     except Exception as e:

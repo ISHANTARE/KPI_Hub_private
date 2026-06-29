@@ -1,0 +1,132 @@
+asana:
+  enabled: false
+  personal_access_token: YOUR_PAT_HERE
+  projects:
+  - kpi_project_id: P001
+    project_id: '1234567890'
+azure_devops:
+  enabled: false
+  organization: your_org
+  pat_token: YOUR_PAT_TOKEN_HERE
+  project: Your Project
+  sync_options:
+    pipelines: true
+    test_results: true
+    work_items: true
+codebeamer:
+  api_token: YOUR_API_TOKEN_HERE
+  enabled: false
+  password: YOUR_PASSWORD_HERE
+  projects:
+  - codebeamer_id: P001
+    kpi_project_id: P001
+    name: TurboCharger V5
+  sync_interval: 60
+  sync_options:
+    defects: true
+    design_reviews: true
+    requirements: true
+    risks: true
+    test_cases: true
+  url: https://your-codebeamer-instance.com
+  username: your_username
+confluence:
+  api_token: YOUR_API_TOKEN_HERE
+  enabled: false
+  space_key: ENG
+  sync_interval: 60
+  url: https://your-confluence.com
+  username: your_username
+email:
+  daily_report_recipients:
+  - admin@kpihub.local
+  enabled: false
+  imap_port: 993
+  imap_server: outlook.office365.com
+  sender_email: admin@kpihub.local
+  sender_password: YOUR_SMTP_PASSWORD_HERE
+  smtp_port: 587
+  smtp_server: smtp.office365.com
+general:
+  backup_before_sync: true
+  historical_days: 90
+  log_file: logs/integration_sync.log
+  logging_enabled: true
+  max_retries: 3
+  retry_delay_seconds: 60
+  timezone: UTC
+github:
+  api_key: YOUR_API_KEY_HERE
+  enabled: false
+  sync_interval: 60
+  url: https://github.com
+  username: your_username
+jira:
+  api_token: YOUR_JIRA_API_TOKEN_HERE
+  enabled: false
+  projects:
+  - jira_key: PRJ
+    jql_query: project = PRJ AND status in (Open, In Progress)
+    kpi_project_id: P001
+    name: Project Name
+  sync_interval: 60
+  sync_options:
+    custom_fields: true
+    epics: true
+    issues: true
+    sprints: true
+  url: https://your-jira-instance.com
+  username: admin@kpihub.local
+knowledge_base:
+  document_folder: data/knowledge_base
+  embedding_model: text-embedding-ada-002
+  enabled: false
+  sync_interval: 180
+  vector_db_type: Chroma
+monday_com:
+  api_key: YOUR_API_KEY_HERE
+  boards:
+  - board_id: 12345
+    kpi_project_id: P001
+    name: Project Board
+  enabled: false
+openai:
+  api_key: YOUR_OPENAI_API_KEY_HERE
+outlook_calendar:
+  client_id: YOUR_CLIENT_ID
+  client_secret: YOUR_CLIENT_SECRET
+  enabled: false
+  sync_interval: 120
+  tenant_id: YOUR_TENANT_ID
+polarion:
+  api_token: YOUR_API_TOKEN_HERE
+  enabled: false
+  project_id: POL_PROJECT
+  sync_interval: 60
+  url: https://your-polarion-instance.com
+power_bi:
+  client_id: YOUR_CLIENT_ID
+  client_secret: YOUR_CLIENT_SECRET
+  dataset_id: YOUR_DATASET_ID
+  enabled: false
+  tenant_id: YOUR_TENANT_ID
+sharepoint:
+  client_id: YOUR_CLIENT_ID
+  client_secret: YOUR_CLIENT_SECRET
+  enabled: false
+  site_url: https://your-sharepoint-site.com
+  tenant_id: YOUR_TENANT_ID
+slack:
+  bot_token: YOUR_BOT_TOKEN_HERE
+  channel_id: YOUR_CHANNEL_ID
+  enabled: false
+teams_webhook:
+  enabled: false
+  webhook_url: YOUR_TEAMS_WEBHOOK_URL_HERE
+testrail:
+  api_key: YOUR_API_KEY_HERE
+  enabled: false
+  project_id: 1
+  sync_interval: 60
+  url: https://your-testrail-instance.com
+  username: your_username

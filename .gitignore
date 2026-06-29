@@ -6,6 +6,16 @@ __pycache__/
 venv/
 reports/
 
+# Data and databases
+data/*
+!data/seed/
+!data/DATA_DICTIONARY.md
+!data/README_SAMPLE_DATA.md
+!data/SAMPLE_DATA_INVENTORY.md
+*.db
+*.sqlite
+*.sqlite3
+
 # Cache directories
 .pytest_cache/
 .hypothesis/

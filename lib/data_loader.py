@@ -255,58 +255,45 @@ def load_data():
 
     try:
         init_resource_cost_data()
-        projects = pd.read_csv(data_dir / "projects" / "projects_status.csv")
-        milestones = pd.read_csv(data_dir / "projects" / "milestones.csv")
-        budget = pd.read_csv(data_dir / "projects" / "budget_tracking.csv")
-        risks = pd.read_csv(data_dir / "risks" / "risk_register.csv")
-        resources = pd.read_csv(data_dir / "resources" / "resource_allocation.csv")
-        monthly_utilization = pd.read_csv(data_dir / "resources" / "monthly_utilization.csv")
-        cost_rates = pd.read_csv(data_dir / "resources" / "cost_rates.csv")
-        defects = pd.read_csv(data_dir / "metrics" / "defects.csv")
-        tests = pd.read_csv(data_dir / "metrics" / "test_execution.csv")
-        requirements = pd.read_csv(data_dir / "metrics" / "requirements.csv")
-        issues = pd.read_csv(data_dir / "projects" / "issues.csv")
-        escalations = pd.read_csv(data_dir / "projects" / "escalations.csv")
-        aspice = pd.read_csv(data_dir / "metrics" / "aspice_status.csv")
+        
+        # Hydrate DB from CSVs if DB tables don't exist
+        from lib.database import sync_all_csvs_to_db, load_dataframe_from_db
+        sync_all_csvs_to_db(force=False)
 
-        try:
-            ecrs = pd.read_csv(data_dir / "projects" / "ecrs.csv")
-        except Exception:
+        projects = load_dataframe_from_db("projects")
+        if projects.empty and (data_dir / "projects" / "projects_status.csv").exists():
+            projects = pd.read_csv(data_dir / "projects" / "projects_status.csv")
+
+        milestones = load_dataframe_from_db("milestones")
+        budget = load_dataframe_from_db("budget")
+        risks = load_dataframe_from_db("risks")
+        resources = load_dataframe_from_db("resources")
+        monthly_utilization = load_dataframe_from_db("monthly_utilization")
+        cost_rates = load_dataframe_from_db("cost_rates")
+        defects = load_dataframe_from_db("defects")
+        tests = load_dataframe_from_db("tests")
+        requirements = load_dataframe_from_db("requirements")
+        issues = load_dataframe_from_db("issues")
+        escalations = load_dataframe_from_db("escalations")
+        aspice = load_dataframe_from_db("aspice")
+        ecrs = load_dataframe_from_db("ecrs")
+        forecast = load_dataframe_from_db("forecast")
+        audit_log = load_dataframe_from_db("audit_log")
+        decisions = load_dataframe_from_db("decisions")
+        defect_trends = load_dataframe_from_db("defect_trends")
+        dev_metrics = load_dataframe_from_db("dev_metrics")
+        design_reviews = load_dataframe_from_db("design_reviews")
+        verification = load_dataframe_from_db("verification")
+
+        if ecrs.empty:
             ecrs = pd.DataFrame(columns=['ECR_ID', 'PROJECT_ID', 'TITLE', 'STATUS', 'CHANGE_TYPE', 'IMPACT_SCHEDULE_DAYS', 'IMPACT_COST'])
-
-        try:
-            forecast = pd.read_csv(data_dir / "resources" / "forecast.csv")
-        except Exception:
-            forecast = pd.DataFrame()
-
-        try:
-            audit_log = pd.read_csv(data_dir / "resources" / "rebalancing_audit_log.csv")
-        except Exception:
-            audit_log = pd.DataFrame()
-
-        try:
-            decisions = pd.read_csv(data_dir / "projects" / "decisions.csv")
-        except Exception:
+        if decisions.empty:
             decisions = pd.DataFrame(columns=['DECISION_ID', 'PROJECT_ID', 'TYPE', 'TITLE', 'APPROVAL_STATUS', 'DUE_DATE', 'OWNER'])
-
-        try:
-            defect_trends = pd.read_csv(data_dir / "metrics" / "defect_trends.csv")
-        except Exception:
-            defect_trends = pd.DataFrame()
-
-        try:
-            dev_metrics = pd.read_csv(data_dir / "metrics" / "development_metrics.csv")
-        except Exception:
+        if dev_metrics.empty:
             dev_metrics = pd.DataFrame(columns=['PROJECT_ID', 'WEEK_START', 'COMMITS_COUNT', 'PR_CYCLE_TIME_HOURS', 'CODE_REVIEWS_PENDING', 'CODE_REVIEWS_APPROVED', 'DEVELOPMENT_VELOCITY'])
-
-        try:
-            design_reviews = pd.read_csv(data_dir / "metrics" / "design_reviews.csv")
-        except Exception:
+        if design_reviews.empty:
             design_reviews = pd.DataFrame(columns=['PROJECT_ID', 'REVIEW_ID', 'STATUS', 'CRITICAL_ISSUES', 'ACTION_COMPLETION_PCT'])
-
-        try:
-            verification = pd.read_csv(data_dir / "metrics" / "verification_activities.csv")
-        except Exception:
+        if verification.empty:
             verification = pd.DataFrame(columns=['VERIFICATION_ID', 'PROJECT_ID', 'STATUS', 'RESULT'])
 
         traceability_insights = compute_traceability_insights(requirements, tests)
