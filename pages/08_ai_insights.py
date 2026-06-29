@@ -8,7 +8,7 @@ import pandas as pd
 import lib.sidebar as sidebar
 import lib.data_loader as data_loader
 import lib.kpi_engine as kpi_engine
-from lib.styling import render_page_header, COLORS
+from lib.styling import render_page_header
 from lib.sidebar import apply_scope_filter
 from lib.copilot import launch_copilot
 

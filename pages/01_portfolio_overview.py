@@ -11,10 +11,7 @@ web_app.py's main() function.
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-import plotly.express as px
-from pathlib import Path
 from datetime import datetime
-import time
 
 import lib.sidebar as sidebar
 import lib.data_loader as data_loader

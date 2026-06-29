@@ -13,7 +13,7 @@ import lib.sidebar as sidebar
 import lib.data_loader as data_loader
 import lib.kpi_engine as kpi_engine
 import lib.charts as charts
-from lib.styling import render_page_header, badge, severity_badge, COLORS, STATUS_COLORS
+from lib.styling import render_page_header, COLORS, STATUS_COLORS
 from lib.sidebar import apply_scope_filter
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
