@@ -121,7 +121,7 @@ def render_page_header(title: str, description: str = "", last_synced: bool = Tr
     st.markdown(
         f'<div style="overflow:hidden;">'
         f'{ts_html}'
-        f'<div class="page-title">{title}</div>'
+        f'<div class="page-title" style="font-size: 32px !important; font-weight: 800 !important; font-family: \'Inter\', sans-serif !important;">{title}</div>'
         f'{desc_html}'
         f'</div>',
         unsafe_allow_html=True,

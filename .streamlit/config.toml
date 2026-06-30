@@ -13,6 +13,3 @@ maxUploadSize = 200
 showErrorDetails = false
 showSidebarNavigation = false
 
-[sidebar]
-showSidebarNavigation = false
-

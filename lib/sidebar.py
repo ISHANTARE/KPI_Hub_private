@@ -54,6 +54,8 @@ def bootstrap_sidebar() -> None:
     Light themed.
     """
     import yaml, os
+    import lib.styling as styling
+    styling.load_css()
 
     # Session state defaults
     if "user_role" not in st.session_state:

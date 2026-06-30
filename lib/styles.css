@@ -205,10 +205,10 @@ section[data-testid="stSidebar"],
 
 /* ── Page header ── */
 .page-title {
-    font-size: 22px !important;
-    font-weight: 700 !important;
+    font-size: 32px !important;
+    font-weight: 800 !important;
     color: var(--text-primary) !important;
-    letter-spacing: -0.3px !important;
+    letter-spacing: -0.5px !important;
     line-height: 1.2 !important;
     margin: 0 !important;
 }
