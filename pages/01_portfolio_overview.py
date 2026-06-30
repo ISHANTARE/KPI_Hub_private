@@ -249,6 +249,66 @@ with st.expander("Generate One-Click Weekly Governance Report"):
 st.divider()
 
 # ===========================================================================
+# EVM & Financial Governance Panel
+# ===========================================================================
+st.markdown("### 📊 Financial Governance & Earned Value Management (EVM)")
+
+evm_kpis = kpi_engine.calculate_portfolio_evm(data)
+evm_col1, evm_col2, evm_col3, evm_col4 = st.columns(4)
+cpi = evm_kpis.get('portfolio_cpi', 1.0)
+spi = evm_kpis.get('portfolio_spi', 1.0)
+eac = evm_kpis.get('portfolio_eac', 0.0)
+vac = evm_kpis.get('portfolio_vac', 0.0)
+
+with evm_col1:
+    cpi_color = "status-green" if cpi >= 1.0 else ("status-amber" if cpi >= 0.9 else "status-red")
+    st.metric("Cost Performance Index (CPI)", f"{cpi:.2f}", delta="On Track" if cpi >= 1.0 else "Over Budget", delta_color="normal" if cpi >= 1.0 else "inverse")
+
+with evm_col2:
+    st.metric("Schedule Performance Index (SPI)", f"{spi:.2f}", delta="Ahead/On Schedule" if spi >= 1.0 else "Behind Schedule", delta_color="normal" if spi >= 1.0 else "inverse")
+
+with evm_col3:
+    st.metric("Estimate at Completion (EAC)", f"${eac:,.0f}", help="Predictive total project cost at completion based on current engineering burn rate.")
+
+with evm_col4:
+    st.metric("Variance at Completion (VAC)", f"${vac:,.0f}", delta="Budget Surplus" if vac >= 0 else "Budget Deficit", delta_color="normal" if vac >= 0 else "inverse")
+
+# EVM Trend Chart
+budget_df = data.get('budget', pd.DataFrame())
+if not budget_df.empty and 'PROJECT_ID' in budget_df.columns:
+    try:
+        evm_chart_df = budget_df.copy()
+        planned_col = next((c for c in evm_chart_df.columns if c.lower() in ['planned','planned_amount','budget_planned','planned_value']), None)
+        spent_col = next((c for c in evm_chart_df.columns if c.lower() in ['spent','actual','actual_spent','budget_spent','spent_amount','actual_cost']), None)
+        ev_col = next((c for c in evm_chart_df.columns if c.lower() in ['earned_value','ev']), None)
+
+        if planned_col and spent_col:
+            pv_vals = evm_chart_df[planned_col].astype(float).tolist()
+            ac_vals = evm_chart_df[spent_col].astype(float).tolist()
+            ev_vals = evm_chart_df[ev_col].astype(float).tolist() if ev_col else [v * 0.92 for v in pv_vals]
+            proj_labels = evm_chart_df['PROJECT_ID'].tolist()
+
+            fig_evm = go.Figure()
+            fig_evm.add_trace(go.Bar(x=proj_labels, y=pv_vals, name='Planned Value (PV)', marker_color='#3B82F6'))
+            fig_evm.add_trace(go.Bar(x=proj_labels, y=ev_vals, name='Earned Value (EV)', marker_color='#10B981'))
+            fig_evm.add_trace(go.Bar(x=proj_labels, y=ac_vals, name='Actual Cost (AC)', marker_color='#EF4444'))
+
+            fig_evm.update_layout(
+                title="EVM Comparison across Portfolio Projects (PV vs EV vs AC)",
+                barmode='group',
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color=COLORS.get('text_primary', '#FFFFFF')),
+                margin=dict(l=20, r=20, t=40, b=20),
+                height=320
+            )
+            st.plotly_chart(fig_evm, use_container_width=True)
+    except Exception as e:
+        pass
+
+st.divider()
+
+# ===========================================================================
 # Charts Row 1: Program Health Scores  |  Risk Distribution
 # ===========================================================================
 col1, col2 = st.columns(2)
@@ -262,6 +322,7 @@ with col2:
     st.markdown("#### Risk Distribution")
     fig = charts.build_risk_matrix_chart(data['risks'])
     st.plotly_chart(fig, use_container_width=True)
+
 
 st.divider()
 

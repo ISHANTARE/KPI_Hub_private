@@ -27,6 +27,7 @@ _NAV_ITEMS = [
     ("System Integrations",  "pages/06_system_integrations.py"),
     ("Data Upload",          "pages/07_data_upload.py"),
     ("AI Insights",          "pages/08_ai_insights.py"),
+    ("Scenario Simulation",  "pages/09_scenario_simulation.py"),
 ]
 
 
@@ -47,7 +48,7 @@ def bootstrap_sidebar() -> None:
     Sidebar layout (top to bottom):
       1. Logo — centered
       2. KPI Hub title
-      3. Navigation (8 pages only, Streamlit built-in nav hidden)
+      3. Navigation (9 pages, Streamlit built-in nav hidden)
       4. Scope expander
       5. Refresh Data button
     Light themed.
@@ -70,15 +71,17 @@ def bootstrap_sidebar() -> None:
     # ── Hide Streamlit's built-in nav + style our buttons as nav items ───────
     st.markdown("""
 <style>
-[data-testid="stSidebarNav"] { display: none !important; }
-
-/* Smooth fade-in to reduce sidebar flash on page transitions */
-[data-testid="stSidebar"] {
-    animation: sidebar-fadein 0.18s ease-in;
-}
-@keyframes sidebar-fadein {
-    from { opacity: 0.3; }
-    to   { opacity: 1;   }
+[data-testid="stSidebarNav"],
+[data-testid="stSidebarNavItems"],
+div[data-testid="stSidebarNav"],
+nav[data-testid="stSidebarNav"],
+ul[data-testid="stSidebarNavItems"] {
+    display: none !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 div[data-testid="stSidebar"] div.stButton > button {

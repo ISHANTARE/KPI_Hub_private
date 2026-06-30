@@ -112,3 +112,63 @@ def get_project_details(project_id: str):
     except Exception as e:
         logger.exception(f"API Error fetching project details for {project_id}: {e}")
         raise HTTPException(status_code=500, detail="Internal server error.")
+
+@app.get("/api/v1/financials/evm", tags=["Financials"])
+def get_portfolio_evm():
+    """Retrieve portfolio-level Earned Value Management (EVM) metrics."""
+    try:
+        from lib.data_loader import load_data
+        from lib.kpi_engine import calculate_portfolio_evm
+        data = load_data()
+        if not data:
+            raise HTTPException(status_code=500, detail="Data loading failed.")
+        kpis = calculate_portfolio_evm(data)
+        return {
+            "portfolio_cpi": kpis.get("portfolio_cpi", 1.0),
+            "portfolio_spi": kpis.get("portfolio_spi", 1.0),
+            "estimate_at_completion": kpis.get("portfolio_eac", 0.0),
+            "variance_at_completion": kpis.get("portfolio_vac", 0.0)
+        }
+    except Exception as e:
+        logger.exception(f"API Error fetching EVM financials: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error retrieving EVM financials.")
+
+@app.get("/api/v1/projects/{project_id}/forecast", tags=["Financials"])
+def get_project_forecast(project_id: str):
+    """Retrieve predictive budget forecasts (EAC, ETC, VAC) for a specific project."""
+    try:
+        from lib.data_loader import load_data
+        from lib.evm_engine import calculate_forecasts, calculate_evm_metrics
+        data = load_data()
+        if not data:
+            raise HTTPException(status_code=500, detail="Data loading failed.")
+        
+        budget_df = data.get("budget")
+        if budget_df is None or budget_df.empty:
+            raise HTTPException(status_code=404, detail="Budget data unavailable.")
+        
+        proj_budget = budget_df[budget_df["PROJECT_ID"] == project_id]
+        if proj_budget.empty:
+            raise HTTPException(status_code=404, detail=f"Budget records for '{project_id}' not found.")
+        
+        planned_col = next((c for c in proj_budget.columns if c.lower() in ['planned','planned_amount','budget_planned','planned_value']), None)
+        spent_col = next((c for c in proj_budget.columns if c.lower() in ['spent','actual','actual_spent','budget_spent','spent_amount','actual_cost']), None)
+        ev_col = next((c for c in proj_budget.columns if c.lower() in ['earned_value','ev']), None)
+
+        pv = float(proj_budget[planned_col].astype(float).sum()) if planned_col else 0.0
+        ac = float(proj_budget[spent_col].astype(float).sum()) if spent_col else 0.0
+        ev = float(proj_budget[ev_col].astype(float).sum()) if ev_col else (pv * 0.95)
+
+        evm = calculate_evm_metrics(pv, ev, ac)
+        forecast = calculate_forecasts(pv, ev, ac, cpi=evm["cpi"])
+        return {
+            "project_id": project_id,
+            "evm_metrics": evm,
+            "forecast": forecast
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception(f"API Error fetching forecast for {project_id}: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error.")
+

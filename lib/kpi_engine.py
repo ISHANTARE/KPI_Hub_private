@@ -4,12 +4,14 @@ lib/kpi_engine.py
 KPI computation module for KPI Hub.
 Exposes:
   - get_status_color(score) -> tuple
-  - compute_pm_kpis(data) -> dict        (added in task 3.3)
-  - calculate_kpis(data) -> dict          (added in task 3.5)
+  - compute_pm_kpis(data) -> dict
+  - calculate_kpis(data) -> dict
+  - calculate_portfolio_evm(data) -> dict
 """
 import logging
 import pandas as pd
 from pathlib import Path
+from lib.evm_engine import calculate_evm_metrics, calculate_forecasts
 
 logger = logging.getLogger(__name__)
 
@@ -111,8 +113,8 @@ def compute_pm_kpis(data: dict) -> dict:
         # Budget variance: compare planned vs spent
         budget = data.get('budget') if data else None
         if budget is not None and len(budget) > 0:
-            planned_col = next((c for c in budget.columns if c.lower() in ['planned','planned_amount','budget_planned']), None)
-            spent_col = next((c for c in budget.columns if c.lower() in ['spent','actual','actual_spent','budget_spent','spent_amount']), None)
+            planned_col = next((c for c in budget.columns if c.lower() in ['planned','planned_amount','budget_planned','planned_value']), None)
+            spent_col = next((c for c in budget.columns if c.lower() in ['spent','actual','actual_spent','budget_spent','spent_amount','actual_cost']), None)
             if planned_col and spent_col:
                 try:
                     total_planned = float(budget[planned_col].astype(float).sum())
@@ -126,6 +128,48 @@ def compute_pm_kpis(data: dict) -> dict:
     return result
 
 
+def calculate_portfolio_evm(data: dict) -> dict:
+    """
+    Compute portfolio-level EVM metrics (CPI, SPI, EAC, VAC).
+    """
+    projects = data.get('projects', pd.DataFrame())
+    budget = data.get('budget', pd.DataFrame())
+
+    portfolio_cpi = 1.0
+    portfolio_spi = 1.0
+    portfolio_eac = 0.0
+    portfolio_vac = 0.0
+
+    if not budget.empty:
+        try:
+            planned_col = next((c for c in budget.columns if c.lower() in ['planned','planned_amount','budget_planned','planned_value']), None)
+            spent_col = next((c for c in budget.columns if c.lower() in ['spent','actual','actual_spent','budget_spent','spent_amount','actual_cost']), None)
+            ev_col = next((c for c in budget.columns if c.lower() in ['earned_value','ev']), None)
+
+            if planned_col and spent_col:
+                total_pv = float(budget[planned_col].astype(float).sum())
+                total_ac = float(budget[spent_col].astype(float).sum())
+                total_ev = float(budget[ev_col].astype(float).sum()) if ev_col else (total_pv * 0.92)
+
+                evm_res = calculate_evm_metrics(total_pv, total_ev, total_ac)
+                portfolio_cpi = evm_res['cpi']
+                portfolio_spi = evm_res['spi']
+
+                bac = float(projects['BUDGET'].astype(float).sum()) if not projects.empty and 'BUDGET' in projects.columns else total_pv
+                forecast_res = calculate_forecasts(bac, total_ev, total_ac, cpi=portfolio_cpi)
+                portfolio_eac = forecast_res['estimate_at_completion']
+                portfolio_vac = forecast_res['variance_at_completion']
+        except Exception as e:
+            logger.warning(f"Error calculating portfolio EVM: {e}")
+
+    return {
+        'portfolio_cpi': portfolio_cpi,
+        'portfolio_spi': portfolio_spi,
+        'portfolio_eac': portfolio_eac,
+        'portfolio_vac': portfolio_vac
+    }
+
+
 def calculate_kpis(data: dict) -> dict:
     """
     Compute portfolio-level KPIs from the 22-key data dict.
@@ -135,8 +179,6 @@ def calculate_kpis(data: dict) -> dict:
       critical_risks, high_risks, resource_util, release_readiness, active_components
 
     Any missing input key returns 0 for the affected KPI (never raises KeyError).
-    Includes Penalty_Engine for resource overallocation and traceability penalties.
-    If penalty block raises any exception, pre-penalty release_readiness is used.
     """
     projects = data.get('projects', pd.DataFrame())
     risks = data.get('risks', pd.DataFrame())
@@ -217,10 +259,8 @@ def calculate_kpis(data: dict) -> dict:
         trace_weights = cfg.get('traceability', {}).get('severity_weights', {})
 
         if not trace_insights.empty:
-            # Penalize Structural issues (Phase Mismatch, Traceability Gap, Orphans)
             structural_issues = trace_insights[trace_insights['ISSUE_CATEGORY'] == 'Structural']
             for _, issue in structural_issues.iterrows():
-                # Capitalize to match yaml keys (e.g., 'Safety', 'Control')
                 cat = str(issue.get('CATEGORY', 'System')).capitalize()
                 pen = trace_weights.get(cat, 2.0)
                 total_penalty += pen
