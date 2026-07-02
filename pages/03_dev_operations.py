@@ -67,7 +67,7 @@ if len(dev_metrics) > 0:
             font=dict(color=COLORS["text_secondary"], family='Inter, sans-serif'),
             margin=dict(t=8, b=8, l=0, r=0),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     with col2:
         st.markdown("#### Average PR Cycle Time by Project")
@@ -94,7 +94,7 @@ if len(dev_metrics) > 0:
             font=dict(color=COLORS["text_secondary"], family='Inter, sans-serif'),
             margin=dict(t=8, b=8, l=0, r=0),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
 else:
     st.info(
@@ -150,7 +150,7 @@ if (
             plot_bgcolor='#f8fafc',
             font=dict(color='#475569', family='Inter, sans-serif'),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     else:
         st.info("No issues with both planned and actual hours recorded yet.")
 else:
@@ -170,7 +170,7 @@ if len(design_rev) > 0:
          'DESIGN_PHASE', 'STATUS', 'ACTION_COMPLETION_PCT']
         if c in design_rev.columns
     ]
-    st.dataframe(design_rev[disp_cols], use_container_width=True, hide_index=True)
+    st.dataframe(design_rev[disp_cols], width='stretch', hide_index=True)
 else:
     st.info("No design reviews data available.")
 
@@ -203,7 +203,7 @@ if ecr_path.exists():
              'IMPACT_COST', 'LINKED_REQUIREMENT', 'APPROVAL_DATE', 'DECISION_REASON']
             if c in ecrs.columns
         ]
-        st.dataframe(ecrs[disp_ecr_cols], use_container_width=True, hide_index=True)
+        st.dataframe(ecrs[disp_ecr_cols], width='stretch', hide_index=True)
     except Exception as e:
         st.error(f"Could not load change requests: {e}")
 else:

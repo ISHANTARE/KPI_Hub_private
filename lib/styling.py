@@ -109,19 +109,19 @@ def render_page_header(title: str, description: str = "", last_synced: bool = Tr
     """
     ts = datetime.now().strftime("%Y-%m-%d %H:%M") if last_synced else ""
     ts_html = (
-        f'<span class="page-meta" style="float:right;">'
+        f'<span class="page-meta page-meta-ts">'
         f'<span class="sync-dot"></span>Last synced {ts}'
         f'</span>'
     ) if ts else ""
 
     desc_html = (
-        f'<div class="page-meta" style="margin-top:3px;">{description}</div>'
+        f'<div class="page-meta">{description}</div>'
     ) if description else ""
 
     st.markdown(
-        f'<div style="overflow:hidden;">'
+        f'<div class="page-header-wrap">'
         f'{ts_html}'
-        f'<div class="page-title" style="font-size: 32px !important; font-weight: 800 !important; font-family: \'Inter\', sans-serif !important;">{title}</div>'
+        f'<div class="page-title">{title}</div>'
         f'{desc_html}'
         f'</div>',
         unsafe_allow_html=True,

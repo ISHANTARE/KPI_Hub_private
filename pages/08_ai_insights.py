@@ -105,13 +105,18 @@ act_md = "\n".join(f"- {l}" for l in action_lines)
 
 st.info(f"**Key Observations (live data):**\n\n{obs_md}\n\n**Recommended Actions:**\n\n{act_md}")
 
-with st.expander("✨ Generate AI Narrative for these observations"):
+from lib.profile_loader import get_active_profile
+profile = get_active_profile()
+profile_name = profile.get("name", "Automotive (ASPICE & ISO 26262)")
+is_aero = "aerospace" in profile_name.lower()
+
+with st.expander("Generate AI Narrative for these observations"):
     if st.button("Generate AI Insights Narrative"):
         if _has_openai:
             with st.spinner("Generating AI narrative..."):
                 ai_prompt = (
-                    f"You are an automotive engineering PMO advisor. Based on these live KPI observations, "
-                    f"provide a 4-6 bullet executive narrative with specific, actionable next steps:\n\n"
+                    f"You are a compliance engineering PMO advisor running under the {profile_name} standards framework. "
+                    f"Based on these live KPI observations, provide a 4-6 bullet executive narrative with specific, actionable next steps:\n\n"
                     f"{obs_md}\n\n{act_md}\n\n"
                     f"Keep it concise, factual, and suitable for a steering committee."
                 )
@@ -119,14 +124,22 @@ with st.expander("✨ Generate AI Narrative for these observations"):
             if ai_narrative:
                 st.markdown(ai_narrative)
             else:
-                st.warning("⚠️ **Synthesized Offline Analysis Generated**: External AI service is unavailable (verify `OPENAI_API_KEY` in `.env`). Showing rule-synthesized local analytical report below.")
+                st.warning("**Synthesized Offline Analysis Generated**: External AI service is unavailable (verify `OPENAI_API_KEY` in `.env`). Showing rule-synthesized local analytical report below.")
                 st.markdown("### Executive Narrative (Synthesized)")
-                st.markdown(
-                    "• **Portfolio Status Watch**: Overall portfolio health stands at 74.7%, requiring close monitoring of slippages in key milestones.\n"
-                    "• **Schedule & Delivery**: On-time delivery is currently 57.1%. Steering committee intervention is advised for slipping critical paths.\n"
-                    "• **Quality & Safety Gates**: Test pass rate is at 62.5% with 3 open critical risks. Prioritize high-severity defect resolution before prototype build freezes.\n"
-                    "• **Resource Bottlenecks**: Resource overallocation detected in simulation and design pools. Recommend temporary workload rebalancing."
-                )
+                if is_aero:
+                    st.markdown(
+                        "• **Program Status Watch**: Overall mission assurance score (MAS) stands at 74.7%, requiring close monitoring of critical milestones.\n"
+                        "• **Schedule & Delivery**: On-time delivery is currently 57.1%. Steering committee intervention is advised for slipping critical paths.\n"
+                        "• **Quality & Safety Gates**: Test pass rate is at 62.5% with 3 open program risks. Prioritize safety-critical anomaly resolution before flight test freeze.\n"
+                        "• **Resource Bottlenecks**: Resource overallocation detected in simulation and design pools. Recommend temporary workload rebalancing."
+                    )
+                else:
+                    st.markdown(
+                        "• **Portfolio Status Watch**: Overall portfolio health stands at 74.7%, requiring close monitoring of slippages in key milestones.\n"
+                        "• **Schedule & Delivery**: On-time delivery is currently 57.1%. Steering committee intervention is advised for slipping critical paths.\n"
+                        "• **Quality & Safety Gates**: Test pass rate is at 62.5% with 3 open critical risks. Prioritize high-severity defect resolution before prototype build freezes.\n"
+                        "• **Resource Bottlenecks**: Resource overallocation detected in simulation and design pools. Recommend temporary workload rebalancing."
+                    )
         else:
             st.warning("OpenAI client not available.")
 
@@ -134,7 +147,7 @@ st.divider()
 
 # ── AI Copilot ────────────────────────────────────────────────────────────────
 st.markdown("#### AI Copilot")
-copilot_clicked = st.button("Launch AI Copilot", use_container_width=False, type="primary")
+copilot_clicked = st.button("Launch AI Copilot", width='content', type="primary")
 
 if hasattr(st, "dialog") or hasattr(st, "experimental_dialog"):
     if copilot_clicked:
@@ -171,30 +184,46 @@ st.divider()
 # ── Lessons Learned & Standards Lookup ───────────────────────────────────────
 st.markdown("#### Lessons Learned & Standards Lookup")
 
-rag_databases = [
-    "All Databases (Federated Search)",
-    "Automotive Lessons Learned (Internal - Project Histories)",
-    "ISO 26262 Functional Safety Standards & Guidelines",
+standards_catalog = profile.get("standards_catalog", {})
+
+# Dynamic database options
+rag_databases = ["All Databases (Federated Search)"]
+for std_key in standards_catalog.keys():
+    rag_databases.append(f"{std_key} Reference Standards")
+# Common domain guidelines
+rag_databases.extend([
     "STRIDE Threat Modeling Definitions & Examples",
     "CFD & Thermal Simulation Best Practices",
-]
+])
+
 selected_rag = st.selectbox("Select Knowledge Base to Query:", options=rag_databases)
 
-search_query = st.text_input("Search knowledge base for keywords (e.g., SYS.1, ASIL, safety, architecture)")
+search_query = st.text_input("Search knowledge base for keywords (e.g., SYS.1, ASIL, Level A, safety, architecture)")
 if search_query:
     st.markdown(f"**Search results for: *{search_query}*** (Selected Scope: {selected_rag})")
     
     from lib.knowledge_base import search_knowledge_base
-    kb_results = search_knowledge_base(search_query)
+    
+    # Filter search by selected domain if it's not "All Databases"
+    selected_domain = None
+    for std_key in standards_catalog.keys():
+        if std_key in selected_rag:
+            selected_domain = std_key
+            break
+            
+    kb_results = search_knowledge_base(search_query, domain=selected_domain)
 
     if kb_results:
         for res in kb_results:
-            with st.expander(f"📖 {res['standard']} — {res['code']} (Relevance: {res['relevance']})"):
+            with st.expander(f"{res['standard']} — {res['code']} (Relevance: {res['relevance']})"):
                 st.write(res['summary'])
     else:
         st.info(f"No direct standard entries matched '{search_query}'. Showing domain general guideline:")
         with st.expander("General PMO Guidance"):
-            st.write("Ensure all system requirements (SYS.2) have bidirectional links to software test cases (SWE.6) prior to safety audit gate.")
+            if is_aero:
+                st.write("Ensure all system high-level requirements (HLRs) have bidirectional links to software test cases prior to FAA certification audit gate.")
+            else:
+                st.write("Ensure all system requirements (SYS.2) have bidirectional links to software test cases (SWE.6) prior to safety audit gate.")
 
 st.divider()
 
@@ -209,7 +238,7 @@ try:
     if not trace_ins.empty:
         st.caption(f"Traceability analysis found {len(trace_ins)} insight records.")
         fig_trace = charts.build_traceability_heatmap_chart(trace_ins)
-        st.plotly_chart(fig_trace, use_container_width=True)
+        st.plotly_chart(fig_trace, width='stretch')
     else:
         st.info("No traceability insight data found. Ensure requirements and tests are loaded.")
 except Exception as e:

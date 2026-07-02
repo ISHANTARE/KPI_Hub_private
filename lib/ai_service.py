@@ -111,7 +111,7 @@ def _generate_offline_analysis(query: str, data_context: Dict[str, Any]) -> str:
     import pandas as pd
     q = query.lower()
 
-    warning_banner = "> ⚠️ **Synthesized Offline Analysis Generated**: External AI service is unavailable (verify `OPENAI_API_KEY` in `.env`). Showing local data engine results below.\n\n"
+    warning_banner = "> **Synthesized Offline Analysis Generated**: External AI service is unavailable (verify `OPENAI_API_KEY` in `.env`). Showing local data engine results below.\n\n"
 
     projects = data_context.get('projects', pd.DataFrame())
     risks = data_context.get('risks', pd.DataFrame())

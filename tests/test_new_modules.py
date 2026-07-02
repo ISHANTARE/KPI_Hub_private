@@ -12,7 +12,7 @@ from pathlib import Path
 from lib.models import ProjectModel, validate_dataframe
 from lib.database import init_db, save_dataframe_to_db, load_dataframe_from_db
 from lib.audit import log_data_edit
-from lib.auth import init_auth, require_role
+from lib.auth import init_session_defaults, require_role
 
 def test_models_validation():
     df = pd.DataFrame([
@@ -43,5 +43,5 @@ def test_audit_logging():
 
 def test_auth_initialization(monkeypatch):
     import streamlit as st
-    init_auth()
+    init_session_defaults()
     assert st.session_state.get("user_role") is not None

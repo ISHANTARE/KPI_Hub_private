@@ -15,7 +15,9 @@ from datetime import datetime
 
 import lib.sidebar as sidebar
 import lib.data_loader as data_loader
+import importlib
 import lib.kpi_engine as kpi_engine
+importlib.reload(kpi_engine)
 import lib.charts as charts
 from lib.styling import (
     render_page_header, badge, severity_badge, escalation_panel,
@@ -173,7 +175,12 @@ if not risks.empty and 'DUE_DATE' in risks.columns:
         except Exception:
             pass
 
-# Calculate ASPICE < 70%
+# Calculate compliance metrics below 70% threshold
+from lib.profile_loader import get_active_profile
+profile = get_active_profile()
+labels = profile.get("labels", {})
+compliance_std_name = labels.get("requirements", "ASPICE").split()[0]
+
 aspice = data.get('aspice', pd.DataFrame())
 poor_aspice_projects = 0
 if not aspice.empty and 'PROJECT_ID' in aspice.columns and 'ASSESSMENT_READINESS' in aspice.columns:
@@ -198,7 +205,7 @@ if not decisions.empty and 'APPROVAL_STATUS' in decisions.columns:
 
 st.markdown(escalation_panel([
     {"value": overdue_high_risks,   "label": "Overdue Risks",      "description": "High/Critical past due date"},
-    {"value": poor_aspice_projects, "label": "ASPICE Below 70%",   "description": "Projects below readiness threshold"},
+    {"value": poor_aspice_projects, "label": f"{compliance_std_name} Below 70%",   "description": "Projects below readiness threshold"},
     {"value": pending_decisions,    "label": "Pending Decisions",  "description": "Approval delayed 7+ days"},
 ]), unsafe_allow_html=True)
 
@@ -210,7 +217,7 @@ with st.expander("Generate One-Click Weekly Governance Report"):
 **Date:** {now.strftime('%Y-%m-%d')}
 ## Executive Summary
 - Overdue High Risks: {overdue_high_risks}
-- Projects failing ASPICE targets: {poor_aspice_projects}
+- Projects failing {compliance_std_name} targets: {poor_aspice_projects}
 - Bottlenecked Decisions: {pending_decisions}
 
 ## Portfolio Status
@@ -220,25 +227,25 @@ with st.expander("Generate One-Click Weekly Governance Report"):
             """
     st.markdown("Report generated. Review below or download for executive distribution.")
     st.markdown(f"""
-    <div style="background-color: var(--card_bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin: 10px 0;">
-        <h3 style="margin-top:0; color:var(--text_primary);">Weekly Executive Governance Report</h3>
-        <p style="color:var(--text_muted); font-size:12px;">Generated: {now.strftime('%Y-%m-%d %H:%M')}</p>
-        <hr style="border-color:var(--border);">
-        <h4 style="color:var(--text_primary);">Executive Summary</h4>
-        <ul>
-            <li><strong>Overdue High/Critical Risks:</strong> {overdue_high_risks}</li>
-            <li><strong>Projects failing ASPICE targets:</strong> {poor_aspice_projects}</li>
-            <li><strong>Bottlenecked Decisions:</strong> {pending_decisions}</li>
-        </ul>
-        <h4 style="color:var(--text_primary);">Portfolio Operational Metrics</h4>
-        <ul>
-            <li><strong>Active Projects:</strong> {kpis['active_components']}</li>
-            <li><strong>Critical Risks:</strong> {kpis['critical_risks']}</li>
-            <li><strong>Test Pass Rate:</strong> {kpis['test_pass_rate']:.1f}%</li>
-            <li><strong>Computed Release Readiness:</strong> {kpis['release_readiness']:.1f}%</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
+<div class="data-card">
+    <h3 class="data-card-title">Weekly Executive Governance Report</h3>
+    <p class="data-card-meta">Generated: {now.strftime('%Y-%m-%d %H:%M')}</p>
+    <hr>
+    <h4>Executive Summary</h4>
+    <ul>
+        <li><strong>Overdue High/Critical Risks:</strong> {overdue_high_risks}</li>
+        <li><strong>Projects failing {compliance_std_name} targets:</strong> {poor_aspice_projects}</li>
+        <li><strong>Bottlenecked Decisions:</strong> {pending_decisions}</li>
+    </ul>
+    <h4>Portfolio Operational Metrics</h4>
+    <ul>
+        <li><strong>Active Projects:</strong> {kpis['active_components']}</li>
+        <li><strong>Critical Risks:</strong> {kpis['critical_risks']}</li>
+        <li><strong>Test Pass Rate:</strong> {kpis['test_pass_rate']:.1f}%</li>
+        <li><strong>Computed Release Readiness:</strong> {kpis['release_readiness']:.1f}%</li>
+    </ul>
+</div>
+""", unsafe_allow_html=True)
     st.download_button(
         "Download Executive Report (.md)",
         data=report_md,
@@ -251,7 +258,7 @@ st.divider()
 # ===========================================================================
 # EVM & Financial Governance Panel
 # ===========================================================================
-st.markdown("### 📊 Financial Governance & Earned Value Management (EVM)")
+st.markdown("### Financial Governance & Earned Value Management (EVM)")
 
 evm_kpis = kpi_engine.calculate_portfolio_evm(data)
 evm_col1, evm_col2, evm_col3, evm_col4 = st.columns(4)
@@ -302,9 +309,44 @@ if not budget_df.empty and 'PROJECT_ID' in budget_df.columns:
                 margin=dict(l=20, r=20, t=40, b=20),
                 height=320
             )
-            st.plotly_chart(fig_evm, use_container_width=True)
+            st.plotly_chart(fig_evm, width='stretch')
     except Exception as e:
         pass
+
+    # Per-Project EVM Table
+    st.markdown("#### Per-Project EVM Metrics & Forecasts")
+    try:
+        pevm_df = kpi_engine.calculate_per_project_evm(data)
+        from lib.notifications import check_and_dispatch_evm_alerts
+        import logging
+        try:
+            check_and_dispatch_evm_alerts(pevm_df)
+        except Exception as e:
+            logging.warning(f"Failed to check EVM alert dispatches: {e}")
+        if not pevm_df.empty:
+            # Format dataframe for presentation
+            fmt_df = pevm_df.copy()
+            st.dataframe(
+                fmt_df,
+                column_config={
+                    "PROJECT_ID": st.column_config.TextColumn("Project ID"),
+                    "PV": st.column_config.NumberColumn("Planned Value (PV)", format="$%,.2f"),
+                    "EV": st.column_config.NumberColumn("Earned Value (EV)", format="$%,.2f"),
+                    "AC": st.column_config.NumberColumn("Actual Cost (AC)", format="$%,.2f"),
+                    "CPI": st.column_config.NumberColumn("CPI", format="%.2f"),
+                    "SPI": st.column_config.NumberColumn("SPI", format="%.2f"),
+                    "EAC": st.column_config.NumberColumn("Estimate at Completion (EAC)", format="$%,.2f"),
+                    "VAC": st.column_config.NumberColumn("Variance at Completion (VAC)", format="$%,.2f"),
+                    "CPI_Status": st.column_config.TextColumn("CPI Status"),
+                    "SPI_Status": st.column_config.TextColumn("SPI Status"),
+                },
+                use_container_width=True,
+                hide_index=True,
+            )
+        else:
+            st.info("No per-project EVM data available.")
+    except Exception as e:
+        st.error(f"Error loading per-project EVM table: {e}")
 
 st.divider()
 
@@ -316,12 +358,12 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown("#### Program Health Scores")
     fig = charts.build_portfolio_health_chart(data['projects'])
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 with col2:
     st.markdown("#### Risk Distribution")
     fig = charts.build_risk_matrix_chart(data['risks'])
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 st.divider()
@@ -421,7 +463,7 @@ with col1:
     r_layout["height"] = 240
     r_layout["margin"] = dict(t=8, b=8, l=0, r=0)
     fig.update_layout(**r_layout)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 with col2:
     st.markdown("#### Project Health Distribution")
@@ -451,7 +493,7 @@ with col2:
     h_layout["xaxis"] = dict(title="", **CHART_DEFAULTS["xaxis"])
     h_layout["yaxis"] = dict(title="Projects", **CHART_DEFAULTS["yaxis"])
     fig.update_layout(**h_layout)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 st.divider()
 
@@ -467,12 +509,12 @@ with col1:
         for _, risk in critical_risks_df.head(3).iterrows():
             st.markdown(
                 f'<div class="data-card">'
-                f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+                f'<div class="data-card-header">'
                 f'{severity_badge("CRITICAL")}'
                 f'<span class="data-card-meta">Exposure: {risk["EXPOSURE_SCORE"]}/9</span>'
                 f'</div>'
                 f'<div class="data-card-title">{risk["RISK_TITLE"]}</div>'
-                f'<div class="data-card-meta" style="margin-top:4px;">{risk["OWNER"]}</div>'
+                f'<div class="data-card-meta">{risk["OWNER"]}</div>'
                 f'</div>',
                 unsafe_allow_html=True,
             )
@@ -481,8 +523,8 @@ with col1:
             st.markdown(f"- **{r['PROJECT_ID']}** — {r['RISK_TITLE']}")
     else:
         st.markdown(
-            '<div class="data-card" style="border-left:3px solid var(--green);">'
-            '<div class="data-card-title" style="color:var(--green);">No critical risks detected</div>'
+            '<div class="data-card border-green">'
+            '<div class="data-card-title text-green">No critical risks detected</div>'
             '</div>',
             unsafe_allow_html=True,
         )
@@ -498,19 +540,19 @@ with col2:
             issue_id = issue.get('ISSUE_ID') or issue.get('ID') or f'I{idx+1}'
             st.markdown(
                 f'<div class="data-card">'
-                f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+                f'<div class="data-card-header">'
                 f'{badge(severity, sev_map.get(severity, "blue"))}'
                 f'<span class="data-card-meta">{issue_id}</span>'
                 f'</div>'
                 f'<div class="data-card-title">{issue["ISSUE_TITLE"]}</div>'
-                f'<div class="data-card-meta" style="margin-top:4px;">{issue["ASSIGNED_TO"]}</div>'
+                f'<div class="data-card-meta">{issue["ASSIGNED_TO"]}</div>'
                 f'</div>',
                 unsafe_allow_html=True,
             )
     else:
         st.markdown(
-            '<div class="data-card" style="border-left:3px solid var(--green);">'
-            '<div class="data-card-title" style="color:var(--green);">No open issues</div>'
+            '<div class="data-card border-green">'
+            '<div class="data-card-title text-green">No open issues</div>'
             '</div>',
             unsafe_allow_html=True,
         )
@@ -526,11 +568,11 @@ with col3:
         avg_util = 0.0
 
     st.metric("Avg Utilization", f"{avg_util:.1f}%")
-    ovr_color = COLORS["red"] if overallocated > 0 else COLORS["green"]
+    ovr_class = "red" if overallocated > 0 else "green"
     st.markdown(
         f'<div class="data-card">'
         f'<div class="data-card-meta">OVERALLOCATED RESOURCES</div>'
-        f'<div style="font-size:28px;font-weight:700;color:{ovr_color};line-height:1.2;">{overallocated}</div>'
+        f'<div class="kpi-number {ovr_class}">{overallocated}</div>'
         f'</div>',
         unsafe_allow_html=True,
     )

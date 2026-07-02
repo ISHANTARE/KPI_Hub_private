@@ -55,7 +55,8 @@ except Exception:
     pass
 
 # ── Tabs ─────────────────────────────────────────────────────────────────────
-tab_cap, tab_rost = st.tabs(["Capacity & Load", "Team Roster"])
+tab_cap, tab_rost, tab_sub = st.tabs(["Capacity & Load", "Team Roster", "Subcontractor Burn"])
+
 
 # ═══════════════════════════════════════════════════════════════
 # TEAM ROSTER TAB
@@ -80,7 +81,7 @@ with tab_rost:
 
             st.markdown("### Organizational Mapping")
             roster_df = roster_df.sort_values(by=['MANAGER_NAME', 'TEAM_MEMBER'])
-            st.dataframe(roster_df, use_container_width=True)
+            st.dataframe(roster_df, width='stretch')
     except Exception as e:
         st.error(f"Could not load organization mapping: {e}")
 
@@ -263,32 +264,45 @@ with tab_cap:
                         used_pct = (_total / labor_budget * 100) if labor_budget else 0
 
                         if _cum and _cum[0] >= labor_budget:
-                            _guard_color  = COLORS["red"]
+                            _guard_cls    = "red"
                             _guard_status = "OVER BUDGET"
                             _guard_msg    = "Already over budget at current allocations."
                         elif _ei != -1:
-                            _guard_color  = COLORS["amber"]
+                            _guard_cls    = "amber"
                             _guard_status = "AT RISK"
                             months_left   = _ei
                             _guard_msg    = f"Budget exhausted by {cols_chrono[_ei]} — {months_left} month{'s' if months_left != 1 else ''} from now."
                         else:
-                            _guard_color  = COLORS["green"]
+                            _guard_cls    = "green"
                             _guard_status = "ON TRACK"
                             _guard_msg    = f"Budget sufficient through {cols_chrono[-1]}."
 
+                        _rem_cls = "green" if _rem >= 0 else "red"
                         st.markdown(f"""
-<div style="background:#0F1923;border-left:3px solid {_guard_color};border-radius:6px;padding:16px 20px;margin-bottom:16px;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-    <span style="font-size:13px;font-weight:600;color:#CBD5E1;">Budget Guard Rail — {selected_proj_matrix}</span>
-    <span style="background:{_guard_color};color:white;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:0.4px;text-transform:uppercase;">{_guard_status}</span>
+<div class="guard-rail {_guard_cls}">
+  <div class="guard-rail-header">
+    <span class="guard-rail-title">Budget Guard Rail — {selected_proj_matrix}</span>
+    <span class="guard-rail-badge {_guard_cls}">{_guard_status}</span>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-    <div><div style="color:#8896A7;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Labor Budget</div><div style="color:#F1F5F9;font-size:18px;font-weight:700;">€{labor_budget:,.0f}</div></div>
-    <div><div style="color:#8896A7;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Projected Spend</div><div style="color:#F1F5F9;font-size:18px;font-weight:700;">€{_total:,.0f} <span style="font-size:12px;color:#8896A7;">({used_pct:.0f}%)</span></div></div>
-    <div><div style="color:#8896A7;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Remaining</div><div style="color:{'#16803C' if _rem >= 0 else '#B91C1C'};font-size:18px;font-weight:700;">€{_rem:,.0f}</div></div>
-    <div><div style="color:#8896A7;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Avg Burn Rate</div><div style="color:#F1F5F9;font-size:18px;font-weight:700;">€{_avg:,.0f}<span style="font-size:11px;color:#8896A7;">/mo</span></div></div>
+  <div class="guard-rail-grid">
+    <div>
+      <div class="guard-rail-stat-label">Labor Budget</div>
+      <div class="guard-rail-stat-value">€{labor_budget:,.0f}</div>
+    </div>
+    <div>
+      <div class="guard-rail-stat-label">Projected Spend</div>
+      <div class="guard-rail-stat-value">€{_total:,.0f} <span class="guard-rail-stat-label">({used_pct:.0f}%)</span></div>
+    </div>
+    <div>
+      <div class="guard-rail-stat-label">Remaining</div>
+      <div class="guard-rail-stat-value {_rem_cls}">€{_rem:,.0f}</div>
+    </div>
+    <div>
+      <div class="guard-rail-stat-label">Avg Burn Rate</div>
+      <div class="guard-rail-stat-value">€{_avg:,.0f}<span class="guard-rail-stat-label">/mo</span></div>
+    </div>
   </div>
-  <div style="color:#CBD5E1;font-size:12px;margin-top:10px;">{_guard_msg}</div>
+  <div class="guard-rail-msg">{_guard_msg}</div>
 </div>
 """, unsafe_allow_html=True)
                     elif labor_budget <= 0.0:
@@ -305,7 +319,7 @@ with tab_cap:
             if not pivot_display.empty:
                 edited_pivot = st.data_editor(
                     pivot_display,
-                    use_container_width=True,
+                    width='stretch',
                     hide_index=True,
                     column_config=col_configs,
                     disabled=frozen_cols,
@@ -334,7 +348,7 @@ with tab_cap:
                 disc_label = "Discard Simulation" if sim_mode else None
 
                 with m_col1:
-                    if st.button(sim_label, type="primary", use_container_width=True, key="save_matrix_btn"):
+                    if st.button(sim_label, type="primary", width='stretch', key="save_matrix_btn"):
                         try:
                             disk_util     = pd.read_csv('data/resources/monthly_utilization.csv')
                             melt_cols     = [c for c in edited_pivot.columns if c in cols_short]
@@ -382,7 +396,7 @@ with tab_cap:
 
                 if sim_mode and disc_label:
                     with m_col2:
-                        if st.button(disc_label, use_container_width=True, key="discard_sim_btn"):
+                        if st.button(disc_label, width='stretch', key="discard_sim_btn"):
                             st.cache_data.clear()
                             st.rerun()
 
@@ -397,7 +411,7 @@ with tab_cap:
                             data=buffer.getvalue(),
                             file_name="planning_matrix_export.xlsx",
                             mime="application/vnd.ms-excel",
-                            use_container_width=True
+                            width='stretch'
                         )
                     except Exception:
                         pass
@@ -462,7 +476,7 @@ with tab_cap:
                         font=dict(family='Inter, sans-serif', color=COLORS["text_secondary"]),
                     )
                     fig_cap.update_yaxes(title_text="FTE Units", tickformat=".1f")
-                    st.plotly_chart(fig_cap, use_container_width=True)
+                    st.plotly_chart(fig_cap, width='stretch')
                 else:
                     st.info("No resource utilization data available for the selected scope.")
 
@@ -475,7 +489,7 @@ with tab_cap:
                                  title="Allocation by Project (Current Month)")
                     fig.update_traces(textposition='inside', textinfo='percent+label')
                     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width='stretch')
 
             with fc3:
                 milestones = data.get('milestones', pd.DataFrame())
@@ -495,7 +509,7 @@ with tab_cap:
                                       title="Demand Forecast (Upcoming Milestones)",
                                       color_discrete_sequence=['#8b5cf6'])
                         fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-                        st.plotly_chart(fig, use_container_width=True)
+                        st.plotly_chart(fig, width='stretch')
                     else:
                         st.info("No upcoming milestones for demand forecasting")
                 else:
@@ -583,7 +597,7 @@ with tab_cap:
                     legend=dict(orientation='h', y=1.1, x=0),
                     font=dict(color='#475569', family='Inter, sans-serif')
                 )
-                st.plotly_chart(_fig_bt, use_container_width=True)
+                st.plotly_chart(_fig_bt, width='stretch')
             except Exception as _e:
                 st.info(f"Budget Burn Trend unavailable: {_e}")
 
@@ -605,7 +619,7 @@ with tab_cap:
                     font=dict(color=COLORS["text_secondary"], family='Inter, sans-serif'),
                     margin=dict(t=8, b=8, l=0, r=0),
                 )
-                st.plotly_chart(fig_wh, use_container_width=True)
+                st.plotly_chart(fig_wh, width='stretch')
 
             st.divider()
 
@@ -643,7 +657,7 @@ with tab_cap:
                         st.success("No overallocated resources or bottlenecks detected! The team is perfectly balanced.")
                     elif underutilized.empty:
                         st.warning("Bottlenecks detected, but no underutilized resources are available to help. You may need to hire or defer work.")
-                        st.dataframe(overallocated[['MANAGER', 'TEAM_MEMBER', 'ROLE', 'SKILL', 'UTIL_NUM', 'PROJECT_ID']], use_container_width=True, hide_index=True)
+                        st.dataframe(overallocated[['MANAGER', 'TEAM_MEMBER', 'ROLE', 'SKILL', 'UTIL_NUM', 'PROJECT_ID']], width='stretch', hide_index=True)
                     else:
                         import json
                         import re
@@ -746,7 +760,7 @@ Return ONLY a valid JSON array of objects with the keys:
             try:
                 audit_df = pd.read_csv('data/resources/rebalancing_audit_log.csv')
                 if not audit_df.empty:
-                    st.dataframe(audit_df.tail(5), use_container_width=True, hide_index=True)
+                    st.dataframe(audit_df.tail(5), width='stretch', hide_index=True)
                 else:
                     st.info("No rebalancing decisions have been logged yet.")
             except Exception:
@@ -754,8 +768,67 @@ Return ONLY a valid JSON array of objects with the keys:
 
             st.dataframe(
                 resources[['TEAM_MEMBER', 'ROLE', 'SKILL', 'ALLOCATION_STATUS', 'UTILIZATION_PCT', 'PROJECT_ID']],
-                use_container_width=True,
+                width='stretch',
                 hide_index=True
             )
         else:
             st.info("No resource allocation data found")
+
+# ═══════════════════════════════════════════════════════════════
+# SUBCONTRACTOR BURN TAB
+# ═══════════════════════════════════════════════════════════════
+with tab_sub:
+    st.markdown("### Subcontractor Burn Rate Tracking")
+    sub_df = data.get('subcontractors', pd.DataFrame())
+    if not sub_df.empty:
+        sub_df_display = sub_df.copy()
+        
+        projected_burn = []
+        for idx, row in sub_df_display.iterrows():
+            if str(row['CONTRACT_TYPE']).lower() == 'fixed':
+                projected_burn.append(row['MONTHLY_CAP'])
+            else:
+                hours = 160
+                calc_burn = row['HOURLY_RATE'] * hours
+                projected_burn.append(min(calc_burn, row['MONTHLY_CAP']))
+                
+        sub_df_display['PROJECTED_MONTHLY_BURN'] = projected_burn
+        
+        tot_sub_budget = sub_df_display['MONTHLY_CAP'].sum()
+        tot_projected_burn = sub_df_display['PROJECTED_MONTHLY_BURN'].sum()
+        
+        col_m1, col_m2, col_m3 = st.columns(3)
+        with col_m1:
+            st.metric("Total Subcontractor Monthly Cap", f"${tot_sub_budget:,.2f}")
+        with col_m2:
+            st.metric("Projected Monthly Burn", f"${tot_projected_burn:,.2f}")
+        with col_m3:
+            burn_ratio = (tot_projected_burn / tot_sub_budget) * 100 if tot_sub_budget > 0 else 0
+            st.metric("Burn Ratio vs Cap", f"{burn_ratio:.1f}%")
+            
+        warning_subcontractors = sub_df_display[sub_df_display['PROJECTED_MONTHLY_BURN'] >= (sub_df_display['MONTHLY_CAP'] * 0.9)]
+        if not warning_subcontractors.empty:
+            for _, row in warning_subcontractors.iterrows():
+                st.warning(f"⚠️ **Cap Alert**: Subcontractor *{row['NAME']}* ({row['COMPANY']}) on Project **{row['PROJECT_ID']}** has projected monthly burn (${row['PROJECTED_MONTHLY_BURN']:,.2f}) close to or exceeding monthly cap (${row['MONTHLY_CAP']:,.2f})!")
+
+        st.dataframe(
+            sub_df_display,
+            column_config={
+                "SUBCONTRACTOR_ID": st.column_config.TextColumn("ID"),
+                "NAME": st.column_config.TextColumn("Name"),
+                "COMPANY": st.column_config.TextColumn("Company"),
+                "PROJECT_ID": st.column_config.TextColumn("Project ID"),
+                "HOURLY_RATE": st.column_config.NumberColumn("Hourly Rate ($)", format="$%.2f"),
+                "MONTHLY_CAP": st.column_config.NumberColumn("Monthly Cap ($)", format="$%,.2f"),
+                "CURRENCY": st.column_config.TextColumn("Currency"),
+                "CONTRACT_TYPE": st.column_config.TextColumn("Contract Type"),
+                "START_DATE": st.column_config.TextColumn("Start Date"),
+                "END_DATE": st.column_config.TextColumn("End Date"),
+                "PROJECTED_MONTHLY_BURN": st.column_config.NumberColumn("Projected Burn ($)", format="$%,.2f"),
+            },
+            use_container_width=True,
+            hide_index=True,
+        )
+    else:
+        st.info("No subcontractor allocation records found.")
+

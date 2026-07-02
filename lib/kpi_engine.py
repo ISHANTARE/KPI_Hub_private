@@ -170,6 +170,72 @@ def calculate_portfolio_evm(data: dict) -> dict:
     }
 
 
+def calculate_per_project_evm(data: dict) -> pd.DataFrame:
+    """
+    Compute per-project EVM metrics (PV, EV, AC, CPI, SPI, EAC, VAC).
+    Returns a pandas DataFrame with columns:
+      PROJECT_ID, PV, EV, AC, CPI, SPI, EAC, VAC, CPI_Status, SPI_Status
+    """
+    budget = data.get('budget', pd.DataFrame())
+    projects = data.get('projects', pd.DataFrame())
+    
+    records = []
+    
+    if projects.empty:
+        return pd.DataFrame(columns=['PROJECT_ID', 'PV', 'EV', 'AC', 'CPI', 'SPI', 'EAC', 'VAC', 'CPI_Status', 'SPI_Status'])
+        
+    project_ids = projects['PROJECT_ID'].unique()
+    
+    planned_col = next((c for c in budget.columns if c.lower() in ['planned','planned_amount','budget_planned','planned_value']), None) if not budget.empty else None
+    spent_col = next((c for c in budget.columns if c.lower() in ['spent','actual','actual_spent','budget_spent','spent_amount','actual_cost']), None) if not budget.empty else None
+    ev_col = next((c for c in budget.columns if c.lower() in ['earned_value','ev']), None) if not budget.empty else None
+
+    for pid in project_ids:
+        # Filter budget for this project
+        p_budget = budget[budget['PROJECT_ID'] == pid] if not budget.empty else pd.DataFrame()
+        # Filter out rows that represent totals to avoid double counting
+        if not p_budget.empty and 'BUDGET_CATEGORY' in p_budget.columns:
+            p_budget = p_budget[~p_budget['BUDGET_CATEGORY'].astype(str).str.upper().str.contains('TOTAL')]
+            
+        p_proj = projects[projects['PROJECT_ID'] == pid]
+        bac = float(p_proj['BUDGET'].iloc[0]) if 'BUDGET' in p_proj.columns and not p_proj.empty and not pd.isna(p_proj['BUDGET'].iloc[0]) else 0.0
+        
+        pv = 0.0
+        ac = 0.0
+        ev = 0.0
+        
+        if not p_budget.empty and planned_col and spent_col:
+            pv = float(p_budget[planned_col].astype(float).sum())
+            ac = float(p_budget[spent_col].astype(float).sum())
+            ev = float(p_budget[ev_col].astype(float).sum()) if ev_col else (pv * 0.92)
+        else:
+            # Fallback if no budget lines
+            pv = bac
+            ac = bac * 0.95
+            ev = bac * 0.92
+            
+        if bac == 0.0:
+            bac = pv
+            
+        evm = calculate_evm_metrics(pv, ev, ac)
+        forecasts = calculate_forecasts(bac, ev, ac, cpi=evm['cpi'])
+        
+        records.append({
+            'PROJECT_ID': pid,
+            'PV': pv,
+            'EV': ev,
+            'AC': ac,
+            'CPI': evm['cpi'],
+            'SPI': evm['spi'],
+            'EAC': forecasts['estimate_at_completion'],
+            'VAC': forecasts['variance_at_completion'],
+            'CPI_Status': evm['cpi_status'],
+            'SPI_Status': evm['spi_status']
+        })
+        
+    return pd.DataFrame(records)
+
+
 def calculate_kpis(data: dict) -> dict:
     """
     Compute portfolio-level KPIs from the 22-key data dict.
@@ -231,16 +297,17 @@ def calculate_kpis(data: dict) -> dict:
     release_ready = (portfolio_health / 100) * (test_pass_rate / 100) * 100
 
     # ---------------------------------------------------------
-    # Cross-System Penalty Integration
+    # Cross-System Penalty Integration (Dynamic Profiles)
     # ---------------------------------------------------------
     try:
-        from integrations.config_helper import load_config
-        cfg = load_config()
+        from lib.profile_loader import get_active_profile
+        profile = get_active_profile()
+        rules = profile.get('rules', {})
 
         total_penalty = 0
 
         # 1. Resource Overallocation Penalties
-        res_penalties = cfg.get('resources', {}).get('resource_overallocation_penalties', {})
+        res_penalties = rules.get('resource_overallocation_penalties', {})
         default_res_penalty = res_penalties.get('Default', 1.0)
 
         if not resources.empty:
@@ -248,15 +315,15 @@ def calculate_kpis(data: dict) -> dict:
             for _, r in overallocated.iterrows():
                 role = str(r.get('ROLE', '')).lower()
                 pen = default_res_penalty
-                if 'safety' in role: pen = res_penalties.get('Safety', 4.0)
-                elif 'integration' in role: pen = res_penalties.get('Integration', 2.0)
-                elif 'test' in role: pen = res_penalties.get('Testing', 1.5)
-                elif 'critical' in role: pen = res_penalties.get('Critical', 3.0)
+                for role_key, penalty_val in res_penalties.items():
+                    if role_key.lower() != 'default' and role_key.lower() in role:
+                        pen = penalty_val
+                        break
                 total_penalty += pen
 
         # 2. Traceability & Phase Mismatch Penalties
         trace_insights = data.get('traceability_insights', pd.DataFrame())
-        trace_weights = cfg.get('traceability', {}).get('severity_weights', {})
+        trace_weights = rules.get('traceability_severity_weights', {})
 
         if not trace_insights.empty:
             structural_issues = trace_insights[trace_insights['ISSUE_CATEGORY'] == 'Structural']
@@ -266,8 +333,8 @@ def calculate_kpis(data: dict) -> dict:
                 total_penalty += pen
 
         release_ready = max(0, release_ready - total_penalty)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning(f"Error executing dynamic profile penalty calculations: {e}")
     # ---------------------------------------------------------
 
     # Active Components

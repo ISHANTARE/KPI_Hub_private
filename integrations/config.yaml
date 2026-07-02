@@ -48,6 +48,7 @@ email:
   smtp_port: 587
   smtp_server: smtp.office365.com
 general:
+  compliance_profile: automotive
   backup_before_sync: true
   historical_days: 90
   log_file: logs/integration_sync.log
@@ -132,6 +133,8 @@ sharepoint:
   sync_interval: 120
 slack:
   enabled: false
+  cpi_alert_threshold: 0.95
+  spi_alert_threshold: 0.95
   notifications:
     budget_overrun: true
     critical_risks: true
@@ -140,6 +143,8 @@ slack:
   webhook_url: https://hooks.slack.com/services/YOUR/WEBHOOK/URL
 teams:
   enabled: true
+  cpi_alert_threshold: 0.95
+  spi_alert_threshold: 0.95
   webhook_url: YOUR_WEBHOOK_URL_HERE
 test_management:
   api_key: YOUR_API_KEY_HERE

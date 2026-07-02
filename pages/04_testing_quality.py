@@ -78,7 +78,7 @@ if not defect_trends.empty:
         height=250,
         margin=dict(t=30, b=10, l=10, r=10),
     )
-    st.plotly_chart(fig_trend, use_container_width=True)
+    st.plotly_chart(fig_trend, width='stretch')
 else:
     st.info("No defect trend data available")
 
@@ -106,10 +106,10 @@ with col1:
             font=dict(color=COLORS["text_secondary"], family='Inter, sans-serif'),
             margin=dict(t=8, b=8, l=0, r=0),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     else:
         st.plotly_chart(
-            charts.build_defect_severity_chart(defects), use_container_width=True
+            charts.build_defect_severity_chart(defects), width='stretch'
         )
 
 with col2:
@@ -131,19 +131,25 @@ with col2:
             font=dict(color=COLORS["text_secondary"], family='Inter, sans-serif'),
             margin=dict(t=8, b=8, l=0, r=0),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     else:
         st.plotly_chart(
-            charts.build_test_execution_chart(tests), use_container_width=True
+            charts.build_test_execution_chart(tests), width='stretch'
         )
 
-# ── ASPICE Compliance ─────────────────────────────────────────────────────────
+# ── Compliance Status ─────────────────────────────────────────────────────────
+from lib.profile_loader import get_active_profile
+profile = get_active_profile()
+labels = profile.get("labels", {})
+compliance_std_name = labels.get("requirements", "ASPICE").split()[0]
+is_aerospace = "aerospace" in profile.get("name", "").lower()
+
 st.divider()
-st.markdown("#### ASPICE Compliance")
+st.markdown(f"#### {compliance_std_name} Compliance")
 
 aspice_df = data.get('aspice', pd.DataFrame())
 fig_aspice = charts.build_aspice_radar_chart(aspice_df)
-st.plotly_chart(fig_aspice, use_container_width=True)
+st.plotly_chart(fig_aspice, width='stretch')
 
 # ── Traceability Heatmap ──────────────────────────────────────────────────────
 st.divider()
@@ -151,15 +157,20 @@ st.markdown("#### Requirements Traceability Heatmap")
 
 traceability_df = data.get('traceability_insights', pd.DataFrame())
 fig_trace = charts.build_traceability_heatmap_chart(traceability_df)
-st.plotly_chart(fig_trace, use_container_width=True)
+st.plotly_chart(fig_trace, width='stretch')
 
-# ── Functional Safety Requirements ───────────────────────────────────────────
+# ── Safety Requirements ───────────────────────────────────────────────────────
 st.divider()
-st.markdown("#### Functional Safety Requirements")
-st.caption(
-    "ISO 26262 safety requirements with ASIL classification, verification method, "
-    "and validation status."
+safety_title = "Critical Systems & Safety Requirements" if is_aerospace else "Functional Safety Requirements"
+safety_caption = (
+    "DO-178C / DO-254 safety requirements with DAL classification, verification method, and validation status."
+    if is_aerospace else
+    "ISO 26262 safety requirements with ASIL classification, verification method, and validation status."
 )
+safety_level_label = "DAL-A Count" if is_aerospace else "ASIL-D Count"
+
+st.markdown(f"#### {safety_title}")
+st.caption(safety_caption)
 
 from pathlib import Path as _Path
 _safety_path = _Path('data/metrics/functional_safety_requirements.csv')
@@ -185,17 +196,19 @@ if _safety_path.exists():
                 )
                 s3.metric("Verified", verified)
 
-            if 'ASIL_LEVEL' in safety_df.columns:
-                asil_d = len(safety_df[safety_df['ASIL_LEVEL'].str.upper() == 'D'])
-                s4.metric("ASIL-D Count", asil_d)
+            level_col = next((c for c in ['ASIL_LEVEL', 'DAL_LEVEL', 'LEVEL'] if c in safety_df.columns), None)
+            if level_col:
+                target_level = 'A' if is_aerospace else 'D'
+                high_safety_count = len(safety_df[safety_df[level_col].str.upper() == target_level])
+                s4.metric(safety_level_label, high_safety_count)
 
             # Full table
             desired_cols = [
-                'SAFETY_REQ_ID', 'PROJECT_ID', 'SAFETY_REQUIREMENT', 'ASIL_LEVEL',
+                'SAFETY_REQ_ID', 'PROJECT_ID', 'SAFETY_REQUIREMENT', 'ASIL_LEVEL', 'DAL_LEVEL',
                 'CATEGORY', 'STATUS', 'VERIFICATION_METHOD', 'VALIDATION_STATUS',
             ]
             disp_cols = [c for c in desired_cols if c in safety_df.columns]
-            st.dataframe(safety_df[disp_cols], use_container_width=True, hide_index=True)
+            st.dataframe(safety_df[disp_cols], width='stretch', hide_index=True)
         else:
             st.info("No functional safety requirements records found.")
     except Exception as e:

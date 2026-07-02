@@ -1,6 +1,6 @@
-/* ─── KPI Hub — Design System ─── */
-/* Single source of truth for all visual styles.    */
-/* Loaded via lib/styling.py → load_css()           */
+/* ─── KPI Hub — Design System ─────────────────────────────────────────────── */
+/* Single source of truth for all visual styles.                               */
+/* Loaded via lib/styling.py → load_css()                                      */
 
 /* ── Font ── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -26,6 +26,7 @@
     --blue:             #1D4ED8;
     --blue-bg:          #EFF6FF;
 
+    /* Sidebar */
     --sidebar-bg:       #0F1923;
     --sidebar-text:     #CBD5E1;
     --sidebar-active:   #F1F5F9;
@@ -34,7 +35,9 @@
     --sidebar-divider:  #1E2D3D;
 }
 
-/* ── Base ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* BASE                                                                         */
+/* ─────────────────────────────────────────────────────────────────────────── */
 html, body,
 [data-testid="stApp"],
 [data-testid="stAppViewContainer"],
@@ -45,45 +48,89 @@ html, body,
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-/* ── Eliminate all excessive padding/margins in Streamlit's layout wrappers ── */
-/* Targets every known Streamlit container selector across versions */
+/* Strip Streamlit's excessive default padding and clear header */
 .block-container,
 .main .block-container,
 [data-testid="stMainBlockContainer"],
 [data-testid="stMain"] > div:first-child,
-[data-testid="stMain"] > div > div:first-child,
 section.main > div.block-container,
 .appview-container .main .block-container {
-    padding-top:    1rem !important;
-    padding-left:   1rem !important;
-    padding-right:  1rem !important;
-    padding-bottom: 1rem !important;
+    padding-top:    4.25rem !important;
+    padding-left:   1.5rem !important;
+    padding-right:  1.5rem !important;
+    padding-bottom: 2rem !important;
     max-width:      100% !important;
     width:          100% !important;
 }
 
-/* Force the main column area itself to use full width */
 [data-testid="stAppViewContainer"] > section[data-testid="stMain"],
 [data-testid="stMain"] {
-    width: 100% !important;
-    min-width: 0 !important;
+    width:       100% !important;
+    min-width:   0 !important;
     padding-left:  0 !important;
     padding-right: 0 !important;
 }
 
-/* ── Sidebar ── */
+/* Prevent Streamlit's own markdown containers from clipping tall text */
+.stMarkdown,
+[data-testid="stMarkdownContainer"],
+[data-testid="stMarkdown"],
+.stMarkdown > div {
+    overflow: visible !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* SIDEBAR                                                                      */
+/* ─────────────────────────────────────────────────────────────────────────── */
+.sidebar-brand {
+    text-align: center;
+    padding:    18px 10px 14px 10px;
+}
+.sidebar-logo {
+    width:   130px;
+    display: block;
+    margin:  0 auto;
+}
+.sidebar-brand-name {
+    font-size:      20px;
+    font-weight:    700;
+    color:          var(--sidebar-active);
+    letter-spacing: 0.3px;
+    margin-top:     10px;
+    font-family:    'Inter', sans-serif;
+}
+.sidebar-brand-sub {
+    font-size:   11px;
+    color:       var(--sidebar-text);
+    margin-top:  2px;
+    font-family: 'Inter', sans-serif;
+}
+
 [data-testid="stSidebar"],
 section[data-testid="stSidebar"],
 [data-testid="stSidebar"] > div:first-child {
-    background: var(--sidebar-bg) !important;
+    background:   var(--sidebar-bg) !important;
     border-right: 1px solid var(--sidebar-divider) !important;
 }
 
+/* Hide Streamlit's built-in nav */
+[data-testid="stSidebarNav"],
+[data-testid="stSidebarNavItems"],
+div[data-testid="stSidebarNav"],
+nav[data-testid="stSidebarNav"],
+ul[data-testid="stSidebarNavItems"] {
+    display:        none !important;
+    height:         0 !important;
+    visibility:     hidden !important;
+    pointer-events: none !important;
+}
+
+/* Sidebar typography */
 [data-testid="stSidebar"] p,
 [data-testid="stSidebar"] span,
 [data-testid="stSidebar"] label {
-    color: var(--sidebar-text) !important;
-    font-size: 13px !important;
+    color:       var(--sidebar-text) !important;
+    font-size:   13px !important;
     font-weight: 400 !important;
 }
 
@@ -93,15 +140,15 @@ section[data-testid="stSidebar"],
 }
 
 [data-testid="stSidebar"] hr {
-    border: none !important;
-    height: 1px !important;
+    border:     none !important;
+    height:     1px !important;
     background: var(--sidebar-divider) !important;
-    margin: 10px 0 !important;
+    margin:     10px 0 !important;
 }
 
 /* Sidebar alerts */
 [data-testid="stSidebar"] [data-testid="stAlert"] {
-    background: rgba(255,255,255,0.05) !important;
+    background:   rgba(255, 255, 255, 0.05) !important;
     border-color: var(--sidebar-divider) !important;
 }
 [data-testid="stSidebar"] [data-testid="stAlert"] p {
@@ -111,250 +158,403 @@ section[data-testid="stSidebar"],
 /* Sidebar checkbox */
 [data-testid="stSidebar"] [data-baseweb="checkbox"] div {
     border-color: #475569 !important;
-    background: transparent !important;
+    background:   transparent !important;
 }
 [data-testid="stSidebar"] [data-baseweb="checkbox"] [aria-checked="true"] div {
-    background: var(--sidebar-accent) !important;
+    background:   var(--sidebar-accent) !important;
     border-color: var(--sidebar-accent) !important;
 }
 
-/* Sidebar buttons */
+/* ── Sidebar nav buttons ── */
+/* All nav buttons: dark transparent base with fixed height to prevent vertical shifting */
 [data-testid="stSidebar"] .stButton > button {
-    background: var(--sidebar-hover) !important;
-    border: 1px solid var(--sidebar-divider) !important;
-    color: var(--sidebar-text) !important;
-    font-size: 12px !important;
-    font-weight: 500 !important;
-    border-radius: 6px !important;
-    width: 100% !important;
-    padding: 8px 14px !important;
-    transition: background 0.15s ease, border-color 0.15s ease !important;
-    box-shadow: none !important;
-    text-align: left !important;
-}
-[data-testid="stSidebar"] .stButton > button:hover {
-    background: #1E3348 !important;
-    border-color: var(--sidebar-accent) !important;
-    color: var(--sidebar-active) !important;
+    background:    transparent !important;
+    border:        none !important;
+    border-left:   3px solid transparent !important;
+    border-radius: 0 6px 6px 0 !important;
+    color:         var(--sidebar-text) !important;
+    font-size:     13px !important;
+    font-weight:   500 !important;
+    padding:       0px 14px 0px 12px !important;
+    width:         100% !important;
+    height:        38px !important;
+    margin:        0px !important;
+    box-sizing:    border-box !important;
+    box-shadow:    none !important;
+    display:       flex !important;
+    align-items:   center !important;
+    transition:    background 0.12s ease, border-color 0.12s ease !important;
 }
 
-/* ── Nav radio → styled as nav items ── */
-[data-testid="stSidebar"] div[role="radiogroup"] > label > div:first-child {
-    display: none !important;
+/* Force left-alignment for button labels by overriding Streamlit's internal flex layouts */
+[data-testid="stSidebar"] .stButton > button div,
+[data-testid="stSidebar"] .stButton > button span,
+[data-testid="stSidebar"] .stButton > button p,
+[data-testid="stSidebar"] .stButton > button div[data-testid="stMarkdownContainer"] {
+    text-align:      left !important;
+    justify-content: flex-start !important;
+    display:         flex !important;
+    align-items:     center !important;
+    width:           100% !important;
 }
-[data-testid="stSidebar"] div[role="radiogroup"] > label {
-    padding: 7px 14px !important;
-    border-radius: 5px !important;
-    margin-bottom: 1px !important;
-    border-left: 3px solid transparent !important;
-    cursor: pointer !important;
-}
-[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
-    background: var(--sidebar-hover) !important;
-}
-[data-testid="stSidebar"] div[role="radiogroup"] > label[aria-checked="true"] {
-    background: var(--sidebar-hover) !important;
+
+[data-testid="stSidebar"] .stButton > button:hover {
+    background:        var(--sidebar-hover) !important;
+    color:             var(--sidebar-active) !important;
     border-left-color: var(--sidebar-accent) !important;
 }
-[data-testid="stSidebar"] div[role="radiogroup"] > label[aria-checked="true"] p,
-[data-testid="stSidebar"] div[role="radiogroup"] > label[aria-checked="true"] span {
-    color: var(--sidebar-active) !important;
-    font-weight: 600 !important;
+
+/* Active nav item rules */
+[data-testid="stSidebar"] .stButton > button.nav-active,
+[data-testid="stSidebar"] .nav-active .stButton > button {
+    background:        var(--sidebar-hover) !important;
+    color:             var(--sidebar-active) !important;
+    border-left-color: var(--sidebar-accent) !important;
+    font-weight:       600 !important;
 }
 
-/* ── Main buttons ── */
-.stButton > button {
-    background: var(--blue) !important;
-    border: none !important;
-    color: #FFFFFF !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
+/* Refresh Data button: slightly different visual */
+[data-testid="stSidebar"] div[class*="st-key-refresh_data"] button {
+    background:    var(--sidebar-hover) !important;
+    border:        1px solid var(--sidebar-divider) !important;
     border-radius: 6px !important;
-    padding: 8px 18px !important;
-    transition: background 0.15s ease !important;
-    box-shadow: none !important;
+    margin-top:    12px !important;
+    justify-content: center !important;
+    text-align:    center !important;
+}
+[data-testid="stSidebar"] div[class*="st-key-refresh_data"] button div,
+[data-testid="stSidebar"] div[class*="st-key-refresh_data"] button span,
+[data-testid="stSidebar"] div[class*="st-key-refresh_data"] button p {
+    justify-content: center !important;
+    text-align:    center !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* MAIN BUTTONS                                                                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
+.stButton > button {
+    background:    var(--blue) !important;
+    border:        none !important;
+    color:         #FFFFFF !important;
+    font-size:     13px !important;
+    font-weight:   600 !important;
+    border-radius: 6px !important;
+    padding:       8px 18px !important;
+    transition:    background 0.15s ease !important;
+    box-shadow:    none !important;
 }
 .stButton > button:hover {
     background: #1741B8 !important;
 }
 
-/* ── Metric cards ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* METRIC CARDS                                                                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
 [data-testid="stMetric"] {
-    background: var(--surface) !important;
-    border: 1px solid var(--border) !important;
+    background:    var(--surface) !important;
+    border:        1px solid var(--border) !important;
     border-radius: 8px !important;
-    padding: 16px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+    padding:       16px !important;
+    box-shadow:    0 1px 3px rgba(0, 0, 0, 0.06) !important;
 }
 [data-testid="stMetric"]:hover {
     border-color: var(--border-strong) !important;
 }
 [data-testid="stMetricLabel"] > div {
-    color: var(--text-muted) !important;
-    font-size: 11px !important;
-    font-weight: 500 !important;
+    color:          var(--text-muted) !important;
+    font-size:      11px !important;
+    font-weight:    500 !important;
     letter-spacing: 0.5px !important;
     text-transform: uppercase !important;
 }
 [data-testid="stMetricValue"] > div {
-    color: var(--text-primary) !important;
-    font-size: 28px !important;
-    font-weight: 700 !important;
+    color:          var(--text-primary) !important;
+    font-size:      28px !important;
+    font-weight:    700 !important;
     letter-spacing: -0.3px !important;
 }
 
-/* ── Page header ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* PAGE HEADER                                                                   */
+/* ─────────────────────────────────────────────────────────────────────────── */
+.page-header-wrap {
+    position:    relative;
+    padding-top: 8px;    /* room for ascenders of the 32px title */
+    overflow:    visible; /* never clip — even if a parent forgets to */
+}
 .page-title {
-    font-size: 32px !important;
-    font-weight: 800 !important;
-    color: var(--text-primary) !important;
-    letter-spacing: -0.5px !important;
-    line-height: 1.2 !important;
-    margin: 0 !important;
+    font-size:      32px;
+    font-weight:    800;
+    color:          var(--text-primary);
+    letter-spacing: -0.5px;
+    line-height:    1.2;
+    margin:         0;
+    font-family:    'Inter', sans-serif;
 }
 .page-meta {
-    font-size: 11px !important;
-    color: var(--text-muted) !important;
-    font-weight: 400 !important;
-    margin-top: 2px !important;
+    font-size:   11px;
+    color:       var(--text-muted);
+    font-weight: 400;
+    margin-top:  3px;
+}
+/* Timestamp floats top-right inside the relatively-positioned wrapper */
+.page-meta-ts {
+    position: absolute;
+    top:      0;
+    right:    0;
 }
 
-/* ── Section headings ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* SECTION HEADINGS                                                              */
+/* ─────────────────────────────────────────────────────────────────────────── */
 h1, h2, h3, h4,
 .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
-    color: var(--text-primary) !important;
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 600 !important;
+    color:          var(--text-primary) !important;
+    font-family:    'Inter', sans-serif !important;
+    font-weight:    600 !important;
     letter-spacing: -0.2px !important;
 }
 
-/* ── Badges ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* BADGES                                                                        */
+/* ─────────────────────────────────────────────────────────────────────────── */
 .badge {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 600;
+    display:        inline-block;
+    font-size:      10px;
+    font-weight:    600;
     letter-spacing: 0.4px;
     text-transform: uppercase;
-    padding: 2px 7px;
-    border-radius: 4px;
+    padding:        2px 7px;
+    border-radius:  4px;
 }
-.badge-red    { background: var(--red-bg);   color: var(--red);   }
-.badge-amber  { background: var(--amber-bg); color: var(--amber); }
-.badge-green  { background: var(--green-bg); color: var(--green); }
-.badge-blue   { background: var(--blue-bg);  color: var(--blue);  }
+.badge-red   { background: var(--red-bg);   color: var(--red);   }
+.badge-amber { background: var(--amber-bg); color: var(--amber); }
+.badge-green { background: var(--green-bg); color: var(--green); }
+.badge-blue  { background: var(--blue-bg);  color: var(--blue);  }
 
-/* ── Status text ── */
-.status-green  { color: var(--green) !important; font-weight: 600; }
-.status-amber  { color: var(--amber) !important; font-weight: 600; }
-.status-red    { color: var(--red)   !important; font-weight: 600; }
-.status-blue   { color: var(--blue)  !important; font-weight: 600; }
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* STATUS TEXT                                                                   */
+/* ─────────────────────────────────────────────────────────────────────────── */
+.status-green { color: var(--green) !important; font-weight: 600; }
+.status-amber { color: var(--amber) !important; font-weight: 600; }
+.status-red   { color: var(--red)   !important; font-weight: 600; }
+.status-blue  { color: var(--blue)  !important; font-weight: 600; }
 
-/* ── Escalation panel ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* ESCALATION PANEL                                                              */
+/* ─────────────────────────────────────────────────────────────────────────── */
 .escalation-panel {
-    background: var(--red-bg);
-    border-left: 3px solid var(--red);
+    background:    var(--red-bg);
+    border-left:   3px solid var(--red);
     border-radius: 0 6px 6px 0;
-    padding: 12px 16px;
+    padding:       12px 16px;
     margin-bottom: 20px;
-    display: flex;
-    gap: 32px;
-    align-items: center;
+    display:       flex;
+    gap:           32px;
+    align-items:   center;
 }
 .escalation-panel.clear {
-    background: var(--surface-raised);
+    background:       var(--surface-raised);
     border-left-color: var(--border);
 }
 .escalation-label {
-    font-size: 11px;
-    font-weight: 600;
+    font-size:      11px;
+    font-weight:    600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--text-muted);
-    margin-bottom: 2px;
+    color:          var(--text-muted);
+    margin-bottom:  2px;
 }
 .escalation-value {
-    font-size: 22px;
+    font-size:   22px;
     font-weight: 700;
-    color: var(--red);
+    color:       var(--red);
     line-height: 1;
 }
 .escalation-value.clear { color: var(--text-secondary); }
 .escalation-desc {
     font-size: 12px;
-    color: var(--text-secondary);
+    color:     var(--text-secondary);
 }
 
-/* ── Data panel cards (replaces kpi-card HTML blocks) ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* DATA CARDS                                                                    */
+/* ─────────────────────────────────────────────────────────────────────────── */
 .data-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background:    var(--surface);
+    border:        1px solid var(--border);
     border-radius: 8px;
-    padding: 14px 16px;
+    padding:       14px 16px;
     margin-bottom: 10px;
 }
 .data-card-title {
-    font-size: 13px;
+    font-size:   13px;
     font-weight: 600;
-    color: var(--text-primary);
+    color:       var(--text-primary);
     margin-bottom: 4px;
 }
 .data-card-meta {
-    font-size: 11px;
-    color: var(--text-muted);
+    font-size:  11px;
+    color:      var(--text-muted);
+    margin-top: 4px;   /* default spacing — no need for inline override */
+}
+.data-card-header {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     center;
+    margin-bottom:   6px;
+}
+/* Accent left-border variants */
+.data-card.border-green { border-left: 3px solid var(--green); }
+.data-card.border-red   { border-left: 3px solid var(--red);   }
+.data-card.border-amber { border-left: 3px solid var(--amber); }
+.data-card.border-blue  { border-left: 3px solid var(--blue);  }
+
+/* Clear state title */
+.data-card-title.text-green { color: var(--green); }
+.data-card-title.text-red   { color: var(--red);   }
+
+/* Large number inside a card */
+.kpi-number {
+    font-size:   28px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.kpi-number.red   { color: var(--red);   }
+.kpi-number.green { color: var(--green); }
+.kpi-number.amber { color: var(--amber); }
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* BUDGET GUARD RAIL                                                             */
+/* ─────────────────────────────────────────────────────────────────────────── */
+.guard-rail {
+    background:    var(--sidebar-bg);
+    border-radius: 6px;
+    padding:       16px 20px;
+    margin-bottom: 16px;
+    border-left:   3px solid var(--border-strong);
+}
+.guard-rail.green { border-left-color: var(--green); }
+.guard-rail.amber { border-left-color: var(--amber); }
+.guard-rail.red   { border-left-color: var(--red);   }
+
+.guard-rail-header {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     center;
+    margin-bottom:   12px;
+}
+.guard-rail-title {
+    font-size:   13px;
+    font-weight: 600;
+    color:       var(--sidebar-text);
+}
+.guard-rail-badge {
+    font-size:      10px;
+    font-weight:    600;
+    padding:        2px 8px;
+    border-radius:  4px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color:          #FFFFFF;
+}
+.guard-rail-badge.green { background: var(--green); }
+.guard-rail-badge.amber { background: var(--amber); }
+.guard-rail-badge.red   { background: var(--red);   }
+
+.guard-rail-grid {
+    display:               grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:                   16px;
+}
+.guard-rail-stat-label {
+    color:          #8896A7;
+    font-size:      10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.guard-rail-stat-value {
+    color:       #F1F5F9;
+    font-size:   18px;
+    font-weight: 700;
+}
+.guard-rail-stat-value.red   { color: #EF4444; }
+.guard-rail-stat-value.green { color: #10B981; }
+.guard-rail-msg {
+    color:      var(--sidebar-text);
+    font-size:  12px;
+    margin-top: 10px;
 }
 
-/* ── Expanders ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* EXPANDERS                                                                     */
+/* ─────────────────────────────────────────────────────────────────────────── */
 [data-testid="stExpander"] {
-    background: var(--surface) !important;
-    border: 1px solid var(--border) !important;
+    background:    var(--surface) !important;
+    border:        1px solid var(--border) !important;
     border-radius: 6px !important;
-    box-shadow: none !important;
+    box-shadow:    none !important;
 }
 
-/* ── Tables / dataframes ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* TABLES / DATAFRAMES                                                           */
+/* ─────────────────────────────────────────────────────────────────────────── */
 [data-testid="stDataFrame"] {
-    border: 1px solid var(--border) !important;
+    border:        1px solid var(--border) !important;
     border-radius: 6px !important;
-    overflow: hidden !important;
-    box-shadow: none !important;
+    overflow:      hidden !important;
+    box-shadow:    none !important;
 }
 
-/* ── Dividers ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* DIVIDERS                                                                      */
+/* ─────────────────────────────────────────────────────────────────────────── */
 hr {
-    border: none !important;
-    height: 1px !important;
+    border:     none !important;
+    height:     1px !important;
     background: var(--border) !important;
-    margin: 18px 0 !important;
+    margin:     18px 0 !important;
 }
 
-/* ── Multiselect tags ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* MULTISELECT TAGS                                                              */
+/* ─────────────────────────────────────────────────────────────────────────── */
 [data-baseweb="tag"] {
-    background: var(--blue-bg) !important;
-    border: 1px solid #BFDBFE !important;
-    color: var(--blue) !important;
+    background:    var(--blue-bg) !important;
+    border:        1px solid #BFDBFE !important;
+    color:         var(--blue) !important;
     border-radius: 4px !important;
-    font-weight: 500 !important;
+    font-weight:   500 !important;
 }
 [data-baseweb="tag"] span { color: var(--blue) !important; }
 
-/* ── Status indicator dot (data sync) ── */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* SYNC DOT ANIMATION                                                            */
+/* ─────────────────────────────────────────────────────────────────────────── */
 .sync-dot {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    background: var(--green);
+    display:       inline-block;
+    width:         7px;
+    height:        7px;
+    background:    var(--green);
     border-radius: 50%;
-    margin-right: 6px;
+    margin-right:  6px;
     vertical-align: middle;
-    animation: syncPulse 2.5s ease-in-out infinite;
+    animation:     syncPulse 2.5s ease-in-out infinite;
 }
 @keyframes syncPulse {
     0%, 100% { opacity: 1; }
     50%       { opacity: 0.4; }
 }
 
-/* ── Hide Streamlit deploy button ── */
-[data-testid="stHeaderDeployButton"],
-div[data-testid="stHeaderActionElements"] {
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* UTILITY SPACERS  (replaces <div style='height: Xpx'> hacks)                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
+.spacer-sm { height: 12px; }
+.spacer-md { height: 20px; }
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* HIDE STREAMLIT CHROME                                                         */
+/* ─────────────────────────────────────────────────────────────────────────── */
+[data-testid="stHeaderDeployButton"] {
     display: none !important;
 }

@@ -299,6 +299,8 @@ def load_data():
         verification = load_dataframe_from_db("verification")
         org_mapping = load_dataframe_from_db("org_mapping")
         actions = load_dataframe_from_db("actions")
+        evm_history = load_dataframe_from_db("evm_history")
+        subcontractors = load_dataframe_from_db("subcontractors")
 
         if ecrs.empty:
             ecrs = pd.DataFrame(columns=['ECR_ID', 'PROJECT_ID', 'TITLE', 'STATUS', 'CHANGE_TYPE', 'IMPACT_SCHEDULE_DAYS', 'IMPACT_COST'])
@@ -312,10 +314,14 @@ def load_data():
             verification = pd.DataFrame(columns=['VERIFICATION_ID', 'PROJECT_ID', 'STATUS', 'RESULT'])
         if actions.empty and (data_dir / "projects" / "action_log.csv").exists():
             actions = pd.read_csv(data_dir / "projects" / "action_log.csv")
+        if evm_history.empty and (data_dir / "projects" / "evm_history.csv").exists():
+            evm_history = pd.read_csv(data_dir / "projects" / "evm_history.csv")
+        if subcontractors.empty and (data_dir / "resources" / "subcontractor_rates.csv").exists():
+            subcontractors = pd.read_csv(data_dir / "resources" / "subcontractor_rates.csv")
 
         traceability_insights = compute_traceability_insights(requirements, tests)
 
-        return {
+        loaded_data = {
             'projects': projects,
             'milestones': milestones,
             'budget': budget,
@@ -340,7 +346,29 @@ def load_data():
             'defect_trends': defect_trends,
             'org_mapping': org_mapping,
             'actions': actions,
+            'evm_history': evm_history,
+            'subcontractors': subcontractors,
         }
+
+        # Apply role-based partitioning and budget confidentiality filtering
+        from lib.auth import get_accessible_projects
+        user_role = st.session_state.get("user_role", "Viewer")
+        if user_role == "Viewer":
+            accessible_projs = get_accessible_projects()
+            if accessible_projs is not None:
+                # Filter out projects they shouldn't see
+                for key, df in loaded_data.items():
+                    if df is not None and isinstance(df, pd.DataFrame) and not df.empty:
+                        if "PROJECT_ID" in df.columns:
+                            loaded_data[key] = df[df["PROJECT_ID"].isin(accessible_projs)].reset_index(drop=True)
+            
+            # Hide budget and forecast tables entirely from Viewers
+            if "budget" in loaded_data:
+                loaded_data["budget"] = pd.DataFrame(columns=loaded_data["budget"].columns)
+            if "forecast" in loaded_data:
+                loaded_data["forecast"] = pd.DataFrame(columns=loaded_data["forecast"].columns)
+
+        return loaded_data
     except Exception as e:
         st.error(f"Error loading data: {e}")
         return None

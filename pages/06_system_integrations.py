@@ -17,6 +17,9 @@ from integrations.scheduler import IntegrationScheduler
 
 # ── Bootstrap & load ────────────────────────────────────────────────────────
 sidebar.bootstrap_sidebar()
+from lib.auth import require_role
+require_role(["Manager"])
+
 data = data_loader.load_data()
 if data is None:
     st.error("Could not load data.")
@@ -72,7 +75,7 @@ if files:
                         unsafe_allow_html=True,
                     )
                 with mcol2:
-                    st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
+                    st.write("")
                     if st.button("Open", key=f"open_file_{clean_key_id}"):
                         try:
                             import subprocess, platform
@@ -96,13 +99,13 @@ if files:
                         st.markdown(f"**Edit Data** ({len(df_full)} rows)")
                         edited_df = st.data_editor(
                             df_full,
-                            use_container_width=True,
+                            width='stretch',
                             num_rows="dynamic",
                             key=f"editor_{clean_key_id}",
                         )
                         scol1, scol2 = st.columns([4, 1])
                         with scol2:
-                            if st.button("Save Changes", key=f"save_{clean_key_id}", use_container_width=True):
+                            if st.button("Save Changes", key=f"save_{clean_key_id}", width='stretch'):
                                 try:
                                     edited_df.to_csv(f, index=False)
                                     log_data_edit('Manager', str(f))
@@ -115,7 +118,7 @@ if files:
                             st.caption(f"{len(df_full)} rows — Audit Log (Read-Only)")
                         else:
                             st.caption(f"{len(df_full)} rows — View-Only")
-                        st.dataframe(df_full, use_container_width=True)
+                        st.dataframe(df_full, width='stretch')
                 except Exception as e:
                     st.error(f"Cannot load file: {e}")
 else:
@@ -204,9 +207,9 @@ if cfg:
         with col:
             with st.expander(title, expanded=False):
                 if section in ['jira', 'codebeamer', 'email']:
-                    st.success("🟢 Status: Operational Live Connector")
+                    st.success("Status: Operational Live Connector")
                 else:
-                    st.info("⚡ Status: Enterprise Connector (Scaffold Ready)")
+                    st.info("Status: Enterprise Connector (Scaffold Ready)")
 
                 if isinstance(conf, dict):
                     section_updates = {}
@@ -530,7 +533,7 @@ else:
 # AUDIT TRAIL (spec req 2.6 — mapped to this page)
 # ═══════════════════════════════════════════════════════════════
 st.divider()
-with st.expander("🔍 System Action Log & Audit Trail", expanded=False):
+with st.expander("System Action Log & Audit Trail", expanded=False):
     st.markdown("Inspect synchronization logs, user configuration audits, and scheduler execution traces.")
 
     log_dir   = Path("logs")

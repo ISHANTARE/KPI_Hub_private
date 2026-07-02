@@ -137,7 +137,7 @@ with col1:
              'BASELINE_DATE', 'STATUS', 'OWNER']
             if c in ms_df.columns
         ]
-        st.dataframe(ms_df[disp_cols], use_container_width=True, hide_index=True)
+        st.dataframe(ms_df[disp_cols], width='stretch', hide_index=True)
     else:
         st.info("No milestone records available")
 
@@ -201,7 +201,7 @@ with col2:
 
             edited_budget = st.data_editor(
                 proj_budget,
-                use_container_width=True,
+                width='stretch',
                 hide_index=True,
                 column_config=col_config,
                 key=f"budget_editor_{selected_proj}",
@@ -210,7 +210,7 @@ with col2:
 
             # Save logic (Manager only)
             if is_manager:
-                if st.button("Save Budget Allocations", use_container_width=True, type="primary"):
+                if st.button("Save Budget Allocations", width='stretch', type="primary"):
                     try:
                         # Re-calculate variances before saving
                         for idx, row in edited_budget.iterrows():
@@ -259,7 +259,7 @@ if len(ecrs) > 0:
              'CHANGE_TYPE', 'IMPACT_SCHEDULE_DAYS', 'IMPACT_COST']
             if c in ecrs_df.columns
         ]
-        st.dataframe(ecrs_df[disp_ecr_cols], use_container_width=True, hide_index=True)
+        st.dataframe(ecrs_df[disp_ecr_cols], width='stretch', hide_index=True)
     with ecr_col2:
         ecr_status_counts = ecrs['STATUS'].value_counts()
         fig_ecr = px.pie(
@@ -275,7 +275,7 @@ if len(ecrs) > 0:
             height=250,
             margin=dict(t=10, b=10, l=10, r=10),
         )
-        st.plotly_chart(fig_ecr, use_container_width=True)
+        st.plotly_chart(fig_ecr, width='stretch')
 else:
     st.info("No change request data available.")
 
@@ -295,6 +295,6 @@ if not decisions_df.empty:
         'IMPACT', 'OWNER', 'DUE_DATE', 'APPROVAL_STATUS',
     ]
     disp_cols = [c for c in desired_cols if c in decisions_df_copy.columns]
-    st.dataframe(decisions_df_copy[disp_cols], use_container_width=True, hide_index=True)
+    st.dataframe(decisions_df_copy[disp_cols], width='stretch', hide_index=True)
 else:
     st.info("No decisions or assumptions logged yet.")

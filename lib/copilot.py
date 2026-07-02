@@ -123,11 +123,11 @@ def _render_copilot_body(data_context, global_kpis=None):
             unsafe_allow_html=True,
         )
     with hc2:
-        if st.button("Clear", key="clear_chat", use_container_width=True):
+        if st.button("Clear", key="clear_chat", width='stretch'):
             st.session_state['copilot_history'] = []
             st.rerun()
     with hc3:
-        if st.button("Close", key="close_chat", use_container_width=True):
+        if st.button("Close", key="close_chat", width='stretch'):
             st.session_state['show_copilot'] = False
             st.rerun()
 
@@ -165,7 +165,7 @@ def _render_copilot_body(data_context, global_kpis=None):
                     idx = i + j
                     if idx < len(QUICK_PROMPTS):
                         label, prompt = QUICK_PROMPTS[idx]
-                        if col.button(label, key=f"qp_{idx}", use_container_width=True):
+                        if col.button(label, key=f"qp_{idx}", width='stretch'):
                             st.session_state['copilot_pending_query'] = prompt
         else:
             for msg in st.session_state['copilot_history']:

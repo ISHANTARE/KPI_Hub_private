@@ -4,6 +4,7 @@
 
 import logging
 import base64
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -19,16 +20,17 @@ _SCOPE_FILTERED_KEYS = [
 ]
 
 _NAV_ITEMS = [
-    ("Portfolio Overview",   "pages/01_portfolio_overview.py"),
-    ("Project Health",       "pages/02_project_health.py"),
-    ("Dev Operations",       "pages/03_dev_operations.py"),
-    ("Testing & Quality",    "pages/04_testing_quality.py"),
-    ("Resource Utilization", "pages/05_resource_utilization.py"),
-    ("System Integrations",  "pages/06_system_integrations.py"),
-    ("Data Upload",          "pages/07_data_upload.py"),
-    ("AI Insights",          "pages/08_ai_insights.py"),
-    ("Scenario Simulation",  "pages/09_scenario_simulation.py"),
+    ("Portfolio Overview",   "pages/01_portfolio_overview.py",  None),
+    ("Project Health",       "pages/02_project_health.py",      None),
+    ("Dev Operations",       "pages/03_dev_operations.py",      None),
+    ("Testing & Quality",    "pages/04_testing_quality.py",     None),
+    ("Resource Utilization", "pages/05_resource_utilization.py",None),
+    ("System Integrations",  "pages/06_system_integrations.py", "Manager"),
+    ("Data Upload",          "pages/07_data_upload.py",         "Manager"),
+    ("AI Insights",          "pages/08_ai_insights.py",         None),
+    ("Scenario Simulation",  "pages/09_scenario_simulation.py", None),
 ]
+# Third element = minimum required role (None = any authenticated user)
 
 
 @st.cache_data
@@ -43,23 +45,47 @@ def _get_logo_b64() -> str:
     return ""
 
 
+def _current_page_stem() -> str:
+    """
+    Return the stem (filename without extension) of the page currently being
+    executed, e.g. '01_portfolio_overview'.
+    """
+    from streamlit.runtime.scriptrunner import get_script_run_ctx
+    ctx = get_script_run_ctx()
+    if ctx and hasattr(ctx, 'pages_manager') and ctx.pages_manager:
+        pages = ctx.pages_manager.get_pages()
+        page_info = pages.get(ctx.page_script_hash, {})
+        script_path = page_info.get("script_path")
+        if script_path:
+            return Path(script_path).stem
+
+    # Fallback to call stack inspection
+    import inspect
+    for frame_info in inspect.stack():
+        fp = Path(frame_info.filename)
+        if fp.parent.name == "pages":
+            return fp.stem
+    return ""
+
+
 def bootstrap_sidebar() -> None:
     """
     Sidebar layout (top to bottom):
-      1. Logo — centered
-      2. KPI Hub title
-      3. Navigation (9 pages, Streamlit built-in nav hidden)
+      1. Logo + KPI Hub title
+      2. Logged-in user identity panel
+      3. Navigation (filtered by role)
       4. Scope expander
-      5. Refresh Data button
-    Light themed.
+      5. Refresh Data + Logout buttons
     """
-    import yaml, os
-    import lib.styling as styling
-    styling.load_css()
+    import yaml
+    from lib.styling import load_css
+    from lib.auth import logout, init_session_defaults
+
+    # CSS is loaded once here; idempotent because Streamlit de-dupes <style> tags
+    load_css()
 
     # Session state defaults
-    if "user_role" not in st.session_state:
-        st.session_state["user_role"] = "Manager"
+    init_session_defaults()
 
     # YAML config validity check
     if os.path.exists("integrations/config.yaml"):
@@ -70,78 +96,68 @@ def bootstrap_sidebar() -> None:
             st.error(f"config.yaml is malformed:\n```\n{exc}\n```")
             st.stop()
 
-    # ── Hide Streamlit's built-in nav + style our buttons as nav items ───────
-    st.markdown("""
+    # ── Detect current page for active-nav highlight ──────────────────────────
+    active_stem = _current_page_stem()
+    active_style = ""
+    if active_stem:
+        active_style = f"""
 <style>
-[data-testid="stSidebarNav"],
-[data-testid="stSidebarNavItems"],
-div[data-testid="stSidebarNav"],
-nav[data-testid="stSidebarNav"],
-ul[data-testid="stSidebarNavItems"] {
-    display: none !important;
-    height: 0 !important;
-    max-height: 0 !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
+[data-testid="stSidebar"] div[class*="st-key-nav_{active_stem}"] button {{
+    background:        var(--sidebar-hover) !important;
+    color:             var(--sidebar-active) !important;
+    border-left-color: var(--sidebar-accent) !important;
+    font-weight:       600 !important;
+}}
+</style>"""
 
-div[data-testid="stSidebar"] div.stButton > button {
-    background: transparent !important;
-    border: none !important;
-    border-left: 3px solid transparent !important;
-    border-radius: 0 6px 6px 0 !important;
-    color: #1F2937 !important;
-    font-size: 13px !important;
-    font-weight: 400 !important;
-    text-align: left !important;
-    padding: 7px 14px 7px 12px !important;
-    width: 100% !important;
-    box-shadow: none !important;
-    margin: 1px 0 !important;
-    transition: all 0.15s ease !important;
-}
-div[data-testid="stSidebar"] div.stButton > button:hover {
-    background: #EFF6FF !important;
-    color: #1D4ED8 !important;
-    border-left-color: #93C5FD !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-    # ── Logo ─────────────────────────────────────────────────────────────────
+    # ── Logo + KPI Hub title ──────────────────────────────────────────────────
     b64 = _get_logo_b64()
     logo_html = (
         f'<img src="data:image/png;base64,{b64}" '
-        f'style="width:130px;display:block;margin:0 auto;" '
-        f'alt="Engineering PMO"/>'
+        f'class="sidebar-logo" alt="Engineering PMO"/>'
     ) if b64 else ""
 
-    # ── Logo + KPI Hub title ──────────────────────────────────────────────────
     st.sidebar.markdown(f"""
-<div style="text-align:center;padding:18px 10px 14px 10px;">
+<div class="sidebar-brand">
     {logo_html}
-    <div style="font-size:20px;font-weight:700;color:#0F1923;
-                letter-spacing:0.3px;margin-top:10px;
-                font-family:Inter,sans-serif;">KPI Hub</div>
-    <div style="font-size:11px;color:#64748B;margin-top:2px;
-                font-family:Inter,sans-serif;">
-        Engineering PMO &middot; KPI Hub
-    </div>
+    <div class="sidebar-brand-name">KPI Hub</div>
+    <div class="sidebar-brand-sub">Engineering PMO &middot; KPI Hub</div>
 </div>
+{active_style}
 """, unsafe_allow_html=True)
-
     st.sidebar.divider()
 
-    # ── Navigation buttons ───────────────────────────────────────────────────
-    for label, page_path in _NAV_ITEMS:
+    # ── User identity panel ───────────────────────────────────────────────────
+    current_role = st.session_state.get("user_role", "Viewer")
+    display_name = st.session_state.get("display_name", "User")
+    role_icon = "👑" if current_role == "Manager" else "👤"
+    st.sidebar.markdown(
+        f"""
+<div style="padding:0.6rem 0.8rem;background:var(--surface-2,#1e293b);
+            border-radius:10px;border:1px solid var(--border,#334155);
+            margin-bottom:0.5rem;">
+  <span style="font-weight:600;color:var(--text-primary,#f1f5f9);">
+    {role_icon} {display_name}
+  </span><br/>
+  <span style="font-size:0.75rem;color:var(--text-muted,#64748b);">
+    {current_role}
+  </span>
+</div>""",
+        unsafe_allow_html=True,
+    )
+
+    # ── Navigation buttons (filtered by role) ────────────────────────────────
+    for label, page_path, required_role in _NAV_ITEMS:
+        # Hide Manager-only pages from Viewers
+        if required_role == "Manager" and current_role != "Manager":
+            continue
         slug = Path(page_path).stem
-        if st.sidebar.button(label, key=f"nav_{slug}", use_container_width=True):
+        if st.sidebar.button(label, key=f"nav_{slug}", width='stretch'):
             st.switch_page(page_path)
 
     st.sidebar.divider()
 
-    # ── Scope expander ────────────────────────────────────────────────────────
+    # ── Scope expander ─────────────────────────────────────────────────────────
     with st.sidebar.expander("Scope", expanded=False):
         org_df_scope = pd.DataFrame()
         manager_options = ["All"]
@@ -187,10 +203,13 @@ div[data-testid="stSidebar"] div.stButton > button:hover {
     st.session_state["current_manager"] = selected_manager
     st.session_state["current_project"] = selected_project
 
-    # ── Refresh Data ──────────────────────────────────────────────────────────
-    if st.sidebar.button("Refresh Data", key="refresh_data", use_container_width=True):
+    # ── Refresh Data + Logout ─────────────────────────────────────────────────
+    if st.sidebar.button("🔄 Refresh Data", key="refresh_data", width='stretch'):
         st.cache_data.clear()
         st.rerun()
+
+    if st.sidebar.button("🚪 Logout", key="logout_btn", width='stretch'):
+        logout()
 
 
 def apply_scope_filter(

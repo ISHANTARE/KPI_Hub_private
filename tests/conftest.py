@@ -218,10 +218,16 @@ _SCHEMAS: dict[str, list[str]] = {
     "actions": [
         "ACTION_ID", "PROJECT_ID", "DESCRIPTION", "STATUS", "OWNER", "DUE_DATE",
     ],
+    "evm_history": [
+        "PROJECT_ID", "SNAPSHOT_DATE", "PV", "EV", "AC",
+    ],
+    "subcontractors": [
+        "SUBCONTRACTOR_ID", "NAME", "COMPANY", "PROJECT_ID", "HOURLY_RATE", "MONTHLY_CAP", "CURRENCY", "CONTRACT_TYPE", "START_DATE", "END_DATE",
+    ],
 }
 
-assert len(_SCHEMAS) == 24, (
-    f"Expected 24 keys in _SCHEMAS, got {len(_SCHEMAS)}: {sorted(_SCHEMAS)}"
+assert len(_SCHEMAS) == 26, (
+    f"Expected 26 keys in _SCHEMAS, got {len(_SCHEMAS)}: {sorted(_SCHEMAS)}"
 )
 
 

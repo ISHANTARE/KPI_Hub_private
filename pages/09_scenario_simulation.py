@@ -28,7 +28,7 @@ render_page_header(
     "Simulate resource reallocation, budget shifts, and schedule compression to evaluate portfolio impacts."
 )
 
-st.info("💡 **Sandbox Environment:** Adjust parameters below to model portfolio scenarios in real-time. Changes here do not alter live database records.")
+st.info("**Sandbox Environment:** Adjust parameters below to model portfolio scenarios in real-time. Changes here do not alter live database records.")
 
 base_kpis = kpi_engine.calculate_kpis(data)
 base_evm = kpi_engine.calculate_portfolio_evm(data)
@@ -38,7 +38,7 @@ budget_df = data.get('budget', pd.DataFrame()).copy()
 # ===========================================================================
 # Simulation Control Panel
 # ===========================================================================
-st.markdown("### 🎛️ Scenario Control Panel")
+st.markdown("### Scenario Control Panel")
 
 col1, col2, col3 = st.columns(3)
 
@@ -88,7 +88,7 @@ st.divider()
 # ===========================================================================
 # Simulated Metrics Comparison
 # ===========================================================================
-st.markdown("### 📈 Baseline vs. Simulated Portfolio Impact")
+st.markdown("### Baseline vs. Simulated Portfolio Impact")
 
 m_col1, m_col2, m_col3, m_col4 = st.columns(4)
 
@@ -112,8 +112,8 @@ with m_col3:
     st.metric(
         "Simulated CPI",
         f"{sim_cpi:.2f}",
-        delta=f"{sim_cpi - base_kpis['portfolio_cpi']:+.2f}",
-        delta_color="normal" if sim_cpi >= base_kpis['portfolio_cpi'] else "inverse"
+        delta=f"{sim_cpi - base_evm['portfolio_cpi']:+.2f}",
+        delta_color="normal" if sim_cpi >= base_evm['portfolio_cpi'] else "inverse"
     )
 
 with m_col4:
@@ -129,7 +129,7 @@ st.divider()
 # ===========================================================================
 # Visual Scenario Comparison Chart
 # ===========================================================================
-st.markdown("### 📊 Metric Comparison Radar / Bar View")
+st.markdown("### Metric Comparison Radar / Bar View")
 
 categories = ['Portfolio Health', 'Release Readiness', 'On-Time Delivery', 'Quality Score']
 baseline_vals = [base_kpis['portfolio_health'], base_kpis['release_readiness'], base_kpis['on_time_delivery'], base_kpis['quality_score']]
@@ -147,4 +147,93 @@ fig.update_layout(
     font=dict(color=COLORS.get('text_primary', '#FFFFFF')),
     height=350
 )
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width='stretch')
+
+st.divider()
+
+# ===========================================================================
+# Granular Resource Move Simulator
+# ===========================================================================
+st.markdown("### Granular Resource Move Simulator")
+st.caption("Model moving specific engineering team members between projects to evaluate headcount capacity shifts, release readiness changes, and cost deltas.")
+
+# Load active projects and resources
+projects_list = sorted(projects_df['PROJECT_ID'].unique().tolist()) if not projects_df.empty else []
+res_df = data.get('resources', pd.DataFrame())
+
+col_sim1, col_sim2 = st.columns(2)
+
+with col_sim1:
+    source_proj = st.selectbox("Source Project (From)", options=projects_list, index=0 if len(projects_list) > 0 else None, key="sim_src_proj")
+    # Filter resources to those currently allocated to source project
+    source_resources = []
+    if not res_df.empty and source_proj:
+        source_resources = sorted(res_df[res_df['PROJECT_ID'] == source_proj]['TEAM_MEMBER'].dropna().unique().tolist())
+    
+    selected_moved_res = st.multiselect("Select Team Members to Move", options=source_resources, key="sim_moved_resources")
+
+with col_sim2:
+    # Target project options (exclude source project)
+    target_options = [p for p in projects_list if p != source_proj]
+    target_proj = st.selectbox("Target Project (To)", options=target_options, index=0 if len(target_options) > 0 else None, key="sim_tgt_proj")
+    duration_wks = st.slider("Move Duration (Weeks)", min_value=1, max_value=12, value=4, key="sim_duration")
+
+if st.button("Run Resource Move Simulation", type="primary"):
+    if not selected_moved_res:
+        st.warning("Please select at least one team member to move.")
+    elif not source_proj or not target_proj:
+        st.warning("Please select both source and target projects.")
+    else:
+        from lib.scenario_engine import simulate_resource_move
+        sim_res = simulate_resource_move(data, source_proj, target_proj, selected_moved_res, duration_wks)
+        
+        st.success(f"Successfully simulated reallocation of {sim_res['moved_count']} resource(s)!")
+        
+        # Display deltas
+        col_res1, col_res2, col_res3 = st.columns(3)
+        with col_res1:
+            orig_rr = sim_res['original_kpis'].get('release_readiness', 0.0)
+            sim_rr = sim_res['simulated_kpis'].get('release_readiness', 0.0)
+            st.metric(
+                "Simulated Release Readiness",
+                f"{sim_rr:.1f}%",
+                delta=f"{sim_rr - orig_rr:+.1f}%",
+                delta_color="normal" if sim_rr >= orig_rr else "inverse"
+            )
+        with col_res2:
+            orig_util = sim_res['original_util']
+            sim_util = sim_res['simulated_util']
+            st.metric(
+                "Simulated Resource Utilization",
+                f"{sim_util:.1f}%",
+                delta=f"{sim_util - orig_util:+.1f}%",
+                delta_color="off"
+            )
+        with col_res3:
+            st.metric(
+                "Estimated Cost Delta",
+                f"${sim_res['cost_delta']:,.2f}",
+                help="Projected cost reallocation for the moved resources over the simulated duration."
+            )
+            
+        # Before/after comparison table
+        comp_data = {
+            "Metric": ["Portfolio Health Score", "Release Readiness Score", "Active Components"],
+            "Baseline": [
+                f"{sim_res['original_kpis'].get('portfolio_health', 0.0):.1f}%",
+                f"{sim_res['original_kpis'].get('release_readiness', 0.0):.1f}%",
+                str(sim_res['original_kpis'].get('active_components', 0))
+            ],
+            "Simulated": [
+                f"{sim_res['simulated_kpis'].get('portfolio_health', 0.0):.1f}%",
+                f"{sim_res['simulated_kpis'].get('release_readiness', 0.0):.1f}%",
+                str(sim_res['simulated_kpis'].get('active_components', 0))
+            ],
+            "Change": [
+                f"{sim_res['simulated_kpis'].get('portfolio_health', 0.0) - sim_res['original_kpis'].get('portfolio_health', 0.0):+.1f}%",
+                f"{sim_res['simulated_kpis'].get('release_readiness', 0.0) - sim_res['original_kpis'].get('release_readiness', 0.0):+.1f}%",
+                f"{sim_res['simulated_kpis'].get('active_components', 0) - sim_res['original_kpis'].get('active_components', 0):+d}"
+            ]
+        }
+        st.dataframe(pd.DataFrame(comp_data), use_container_width=True, hide_index=True)
+

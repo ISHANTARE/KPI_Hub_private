@@ -13,6 +13,9 @@ from lib.styling import render_page_header
 
 # ── Bootstrap & load ────────────────────────────────────────────────────────
 sidebar.bootstrap_sidebar()
+from lib.auth import require_role
+require_role(["Manager"])
+
 data = data_loader.load_data()
 if data is None:
     st.error("Could not load data.")
@@ -127,7 +130,7 @@ if uploaded_seg_doc is not None:
     with st.expander("Preview Extracted Text"):
         st.text(doc_text[:1000] + ("..." if len(doc_text) > 1000 else ""))
 
-    if st.button("✨ Extract & Segregate Data"):
+    if st.button("Extract & Segregate Data"):
         with st.spinner("Analyzing and segregating data with AI..."):
             from integrations.openai_client import get_completion
             prompt = f"""Analyze the following text and segregate it into relevant datasets. Focus on:
@@ -167,7 +170,7 @@ if st.session_state.get('segregated_data'):
         if items:
             st.write(f"### {key.title()} ({len(items)})")
             df = pd.DataFrame(items)
-            st.dataframe(df, use_container_width=True)
+            st.dataframe(df, width='stretch')
 
     st.divider()
     apply_mode = st.radio("How would you like to apply this data?",
@@ -214,7 +217,7 @@ if uploaded_doc is not None:
     with st.expander("Preview Extracted Text"):
         st.text(doc_text[:1000] + ("..." if len(doc_text) > 1000 else ""))
 
-    if st.button("✨ Extract Implicit Commitments"):
+    if st.button("Extract Implicit Commitments"):
         with st.spinner("Analyzing with AI..."):
             from integrations.openai_client import get_completion
             prompt = f"""Analyze the following meeting transcript/document. Extract any implicit commitments, action items, or promises made during this conversation. 

@@ -208,3 +208,51 @@ def _log_notification(recipient: str, channel: str, event_type: str,
         LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
         df_log = new_row
     df_log.to_csv(LOG_FILE, index=False)
+
+
+def check_and_dispatch_evm_alerts(pevm_df: pd.DataFrame) -> None:
+    """
+    Check CPI/SPI metrics for each project. If any project is below
+    configured alert thresholds, dispatch alerts via Slack and Microsoft Teams webhooks.
+    """
+    cfg = _load_notify_config()
+    
+    # Slack Settings
+    slack_cfg = cfg.get("slack", {})
+    slack_enabled = slack_cfg.get("enabled", False)
+    slack_webhook = slack_cfg.get("webhook_url", "")
+    slack_cpi_thresh = float(slack_cfg.get("cpi_alert_threshold", 0.95))
+    slack_spi_thresh = float(slack_cfg.get("spi_alert_threshold", 0.95))
+    
+    # Teams Settings
+    teams_cfg = cfg.get("teams", {})
+    teams_enabled = teams_cfg.get("enabled", False)
+    teams_webhook = teams_cfg.get("webhook_url", "")
+    teams_cpi_thresh = float(teams_cfg.get("cpi_alert_threshold", 0.95))
+    teams_spi_thresh = float(teams_cfg.get("spi_alert_threshold", 0.95))
+    
+    from integrations.slack_notify import send_slack_alert, send_teams_alert
+    
+    for _, row in pevm_df.iterrows():
+        pid = row["PROJECT_ID"]
+        cpi = float(row["CPI"])
+        spi = float(row["SPI"])
+        
+        # Slack Check & Dispatch
+        if slack_enabled and slack_webhook and not slack_webhook.startswith("YOUR_"):
+            if cpi < slack_cpi_thresh:
+                msg = f"⚠️ *EVM CPI Alert*: Project *{pid}* has CPI of *{cpi:.2f}* (below threshold {slack_cpi_thresh})."
+                send_slack_alert(msg, slack_webhook)
+            if spi < slack_spi_thresh:
+                msg = f"⚠️ *EVM SPI Alert*: Project *{pid}* has SPI of *{spi:.2f}* (below threshold {slack_spi_thresh})."
+                send_slack_alert(msg, slack_webhook)
+                
+        # Teams Check & Dispatch
+        if teams_enabled and teams_webhook and not teams_webhook.startswith("YOUR_") and not teams_webhook.startswith("YOUR_WEBHOOK"):
+            if cpi < teams_cpi_thresh:
+                msg = f"EVM CPI Alert: Project {pid} has CPI of {cpi:.2f} (below threshold {teams_cpi_thresh})."
+                send_teams_alert(msg, teams_webhook)
+            if spi < teams_spi_thresh:
+                msg = f"EVM SPI Alert: Project {pid} has SPI of {spi:.2f} (below threshold {teams_spi_thresh})."
+                send_teams_alert(msg, teams_webhook)
+
