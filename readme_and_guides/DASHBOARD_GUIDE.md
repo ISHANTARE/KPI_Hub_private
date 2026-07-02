@@ -1,341 +1,57 @@
-# 🚀 KPI Hub Web Dashboard - Getting Started
+# 🚀 KPI Hub Web Dashboard - User Guide
 
 ## Overview
-
-The KPI Hub is a **Streamlit-based web dashboard** that displays real-time KPI metrics and visualizations for engineering programs.
-
-**Similar to the image you provided**, the dashboard includes:
-- ✅ Overall Maturity & Release Readiness metrics
-- ✅ Domain Scores (bar charts)
-- ✅ Risk Distribution (donut chart)
-- ✅ Project Health Status breakdown
-- ✅ Readiness breakdown with base maturity + penalties
-- ✅ Sidebar navigation menu
-- ✅ Multiple analysis views
+The KPI Hub is an enterprise-grade multi-page Streamlit web dashboard. It features role-based access control, a unified SQL operational database layer, automatic CSV-to-DB synchronization, and predictive AI insights tailored for automotive and engineering program management.
 
 ---
 
-## Installation & Setup
+## 🔐 Authentication & Roles
 
-### Option 1: Quick Start (Windows)
-```bash
-# Double-click this file:
-run_app.bat
+The system secures access with a Bcrypt-hashed user authentication gate.
 
-# OR run from terminal:
-python -m pip install -r requirements.txt
-streamlit run web_app.py
-```
-
-### Option 2: Manual Setup (All Platforms)
-
-**Step 1: Install Python packages**
-```bash
-pip install -r requirements.txt
-```
-
-**Step 2: Run the application**
-```bash
-streamlit run web_app.py
-```
-
-**Step 3: Open browser**
-- Automatically opens at `http://localhost:8501`
-- Or manually open in your browser
+- **Manager Role**: Has full read/write access to all portfolio pages, data editors, database upload utilities (Page 7), and external system integrations (Page 6).
+- **Viewer Role**: Read-only access restricted to specific assigned projects (defined in `config/users.yaml`); budget details and admin configuration screens are hidden.
 
 ---
 
-## Dashboard Features
+## 📈 Multi-Page Dashboard Directory
 
-### 📊 Main Dashboard Tab
+### Page 1: Portfolio Overview
+- **Key Metrics**: Portfolio Health Index (calculated from combined project indexes), On-Time Delivery %, Quality Score, and Action Closure Rate.
+- **Charts**:
+  - **Portfolio Maturity Scores**: Base maturity against target ASIL compliance levels.
+  - **EVM Comparison**: Planned Value (PV) vs Earned Value (EV) vs Actual Cost (AC) grouped bar charts.
+- **Alerts**: Real-time alerts for budget variance limits, HIL testing blockages, and milestone slippage.
 
-**Top Metrics:**
-```
-┌─────────────────┬──────────────────┬──────────────┬──────────────┬─────────────┐
-│ Overall         │ Release          │ Active       │ Critical     │ Test Pass   │
-│ Maturity        │ Readiness        │ Components   │ Risks        │ Rate        │
-│ 80.6%           │ 44.0%            │ 20           │ 0            │ 72%         │
-└─────────────────┴──────────────────┴──────────────┴──────────────┴─────────────┘
-```
+### Page 2: Project Health
+- **Scope**: Drill down into specific engineering projects.
+- **Widgets**:
+  - **Milestone Timelines**: Current status of target dates and schedule variance.
+  - **ECR Status**: Engineering Change Requests pending vs completed.
+  - **Risk Exposure**: Heatmaps displaying risk impact vs probability.
 
-**Visualizations:**
-1. **Domain Scores** - Shows health of B-Release, K-Release, Quality
-2. **Risk Distribution** - Pie chart: Critical, High, Medium, Low
-3. **Project Health Status** - Bar chart: Excellent, Healthy, Watchlist, Critical
-4. **Readiness Breakdown** - Base Maturity (85.2%) + Risk Penalty (-8.5%)
+### Page 3: Dev Operations
+- **Overview**: Monitors Git commit metrics, pull request cycle times, and automated build failures.
+- **Integrations**: Displays details synced directly from enterprise developer spaces (e.g. GitHub/GitLab).
 
-**Quick Summary Cards:**
-- 🔴 Critical Risks (top 3)
-- ⚠️ Open Issues (count & top 3)
-- 📊 Resource Utilization (overallocated & average %)
+### Page 4: Testing & Quality
+- **Focus**: Displays verification and validation activity metrics.
+- **Features**: Traceability matrices mapping system requirements (SYS.1-SYS.3) to test cases (SWE.1-SWE.6), showing orphan counts and phase mismatches.
 
----
+### Page 5: Resource Utilization
+- **Workload Management**: Displays monthly allocation of engineering roles (FTE) across active projects.
+- **Rebalancing recommendations**: AI-assisted reallocation recommendations to resolve team bottlenecks.
 
-### 📈 Other Navigation Options
+### Page 6: System Integrations (Manager Only)
+- **Features**: Edit and sync configurations for Jira, Codebeamer, GitHub, Email, Teams, SAP, and Outlook.
+- **Operations**: Trigger on-demand syncs ("Pull Data") or run connection health tests ("Test Auth").
 
-| Tab | Description |
-|-----|-------------|
-| 🏠 Dashboard | Main KPI overview (you are here) |
-| 📈 KPI Analysis | Detailed breakdown by project |
-| 🔧 Components | System component tracking |
-| 📋 ECRs | Engineering Change Requests |
-| ⚠️ Risks | Full risk register with severity |
-| 📊 Trends | Trend analysis over time |
-| ✅ Actions | Open issues & escalations |
-| 📤 Upload | Upload new data files |
-| 🔍 Audit | System audit trail |
-| 💡 Insights | AI-powered recommendations |
+### Page 7: Data Upload (Manager Only)
+- **Features**: Drag-and-drop CSV uploader to update system datasets.
+- **Sync**: Uploading files triggers automatic database refresh (`sync_all_csvs_to_db(force=True)`).
 
----
+### Page 8: AI Insights
+- **Function**: Explores the compiled document index and queries automotive standards (ASPICE v3.1, ISO 26262 ASIL ratings) using the RAG model.
 
-## What Gets Displayed
-
-### Data Source
-The dashboard automatically loads data from:
-```
-data/
-├── projects/projects_status.csv
-├── projects/milestones.csv
-├── projects/budget_tracking.csv
-├── projects/issues.csv
-├── projects/escalations.csv
-├── risks/risk_register.csv
-├── resources/resource_allocation.csv
-└── metrics/
-    ├── defects.csv
-    ├── test_execution.csv
-    ├── requirements.csv
-    └── ... (other metrics)
-```
-
-### KPI Calculations
-The app calculates metrics from your data:
-- **Portfolio Health:** Average of all project health scores
-- **Release Readiness:** (Health × Test Pass Rate) / 100
-- **On-Time Delivery %:** % of projects on GREEN schedule
-- **Test Pass Rate:** % of tests with PASSED status
-- **Critical Risks:** Count of risks with CRITICAL severity
-
----
-
-## Customization
-
-### Change Colors
-Edit in `web_app.py`:
-```python
-# Domain Scores colors:
-marker_color=['#6366f1', '#06b6d4', '#10b981']  # Indigo, Cyan, Green
-
-# Risk colors:
-colors = {'CRITICAL': '#dc3545', 'HIGH': '#fd7e14', ...}
-```
-
-### Modify KPI Formulas
-Edit `calculate_kpis()` function in `web_app.py`:
-```python
-def calculate_kpis(data):
-    # Edit these calculations:
-    portfolio_health = projects['HEALTH_SCORE'].mean()
-    on_time = len(projects[...]) / len(projects) * 100
-```
-
-### Add New Charts
-Streamlit + Plotly make it easy:
-```python
-import plotly.graph_objects as go
-fig = go.Figure(data=[go.Bar(...)])
-st.plotly_chart(fig, use_container_width=True)
-```
-
----
-
-## Troubleshooting
-
-### Issue: "ModuleNotFoundError: No module named 'streamlit'"
-**Solution:**
-```bash
-pip install -r requirements.txt
-```
-
-### Issue: "Port 8501 already in use"
-**Solution:**
-```bash
-streamlit run web_app.py --server.port 8502
-```
-
-### Issue: Data files not loading
-**Check:**
-1. CSV files are in `data/` folder
-2. File names match exactly (case-sensitive on Linux/Mac)
-3. CSV format is correct (first row is headers)
-
-**Fix:**
-```bash
-# Check data folder
-ls -la data/projects/
-ls -la data/metrics/
-```
-
-### Issue: Charts not displaying
-**Solution:**
-- Ensure Plotly is installed: `pip install plotly`
-- Clear browser cache: Ctrl+Shift+Delete
-- Restart Streamlit: Stop and run again
-
----
-
-## Performance & Optimization
-
-### Caching (Already Implemented)
-```python
-@st.cache_data
-def load_data():
-    # Data is cached - only loads once
-```
-
-### For Large Datasets
-1. Filter data in views (e.g., only show last 100 rows)
-2. Use Streamlit session state for user selections
-3. Consider pagination for large tables
-
-### Monitor Performance
-- Check browser console (F12)
-- Look at terminal output for errors
-- Use `st.write(st.session_state)` to debug
-
----
-
-## Deployment Options
-
-### 1. Streamlit Cloud (Free, Easy)
-```bash
-# Push to GitHub, then:
-# Go to https://share.streamlit.io/
-# Connect GitHub repo
-# Done!
-```
-
-### 2. Local Network
-```bash
-streamlit run web_app.py --server.address 0.0.0.0
-# Access from: http://<your-ip>:8501
-```
-
-### 3. Docker (Production)
-```dockerfile
-FROM python:3.9
-WORKDIR /app
-COPY . .
-RUN pip install -r requirements.txt
-CMD ["streamlit", "run", "web_app.py"]
-```
-
-### 4. Cloud Providers
-- **AWS:** EC2 with Streamlit
-- **Heroku:** Container deployment
-- **Google Cloud:** Cloud Run
-- **Azure:** Container Instances
-
----
-
-## Workflow
-
-### Daily Use
-1. Run `run_app.bat` (Windows) or `bash run_app.sh` (Mac/Linux)
-2. Dashboard opens at localhost:8501
-3. Review KPIs and metrics
-4. Navigate to specific tabs for details
-5. Export data if needed
-6. Press Ctrl+C to stop
-
-### Weekly Updates
-1. Update CSV files in `data/` folder
-2. Run app again (data auto-reloads)
-3. Generate reports
-4. Share dashboard URL with team
-
-### Data Integration
-- **Codebeamer Export** → Copy to `data/metrics/`
-- **Jira Export** → Copy to `data/projects/`
-- **Excel/CSV** → Save to appropriate folder
-- Refresh page to see updates
-
----
-
-## File Structure
-
-```
-KPI_Hub_Project/
-├── web_app.py                    [Main Streamlit application]
-├── requirements.txt              [Python dependencies]
-├── run_app.bat                   [Windows startup script]
-├── run_app.sh                    [Mac/Linux startup script]
-├── RUN_WEB_APP.md               [This file]
-├── .streamlit/config.toml        [Streamlit configuration]
-└── data/                         [CSV data files]
-    ├── projects/
-    ├── metrics/
-    ├── risks/
-    └── resources/
-```
-
----
-
-## Support & Help
-
-### Documentation
-- Streamlit Docs: https://docs.streamlit.io
-- Plotly Docs: https://plotly.com/python
-- Pandas Docs: https://pandas.pydata.org
-
-### Common Issues
-- **Data not loading:** Check file paths in `load_data()` function
-- **Charts not rendering:** Install `pip install plotly`
-- **Performance slow:** Reduce data size or use filtering
-
-### Debugging
-```python
-# Add to web_app.py to see data:
-st.write(data)
-st.write(kpis)
-```
-
----
-
-## Next Steps
-
-1. ✅ Run the app: `run_app.bat` or `streamlit run web_app.py`
-2. ✅ Explore all dashboard tabs
-3. ✅ Customize colors & metrics to your needs
-4. ✅ Replace sample data with real project data
-5. ✅ Deploy to cloud (optional)
-6. ✅ Share dashboard URL with your team
-
----
-
-## Tips & Tricks
-
-### Keyboard Shortcuts
-- **R** - Rerun app
-- **C** - Clear cache
-- **F** - Focus mode
-- **S** - Toggle sidebar
-
-### Streamlit Magic
-- Use `st.write()` to display anything
-- Use `st.metric()` for KPI cards
-- Use `st.plotly_chart()` for interactive charts
-- Use `st.dataframe()` for tables
-
-### Performance
-- Use `@st.cache_data` for expensive operations
-- Avoid loading full datasets in every view
-- Use column filtering when possible
-
----
-
-**Status:** ✅ Ready to Launch  
-**Version:** 1.0  
-**Last Updated:** May 30, 2026
-
-**Happy Dashboarding! 🎉**
+### Page 9: Scenario Simulation
+- **Function**: Predicts budget and schedule impacts by tweaking project variables (such as FTE counts or safety compliance requirements).

@@ -1,129 +1,68 @@
-# How to Run the KPI Hub Web Dashboard
+# Running the KPI Hub Platform
 
-## Quick Start (2 minutes)
+This guide provides instructions to run the updated, multi-page, SQLite-backed KPI Hub platform.
 
-### Step 1: Install Dependencies
+---
+
+## ⚡ Quick Start
+
+### 1. Install Dependencies
+Make sure you have Python 3.9+ installed, then install the required libraries:
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 2: Run the Web App
+### 2. Run the Streamlit Dashboard
+Launch the main user interface:
 ```bash
-streamlit run web_app.py
+python -m streamlit run web_app.py
 ```
+The application will automatically launch in your browser at `http://localhost:8501`.
 
-### Step 3: Open in Browser
-The app will automatically open at: `http://localhost:8501`
-
----
-
-## What You'll See
-
-### Dashboard Tab (Home)
-- **Overall Maturity:** 80.6% (Portfolio health score)
-- **Release Readiness:** 44.0% (Release readiness metric)
-- **Active Components:** 20 (Active projects/components)
-- **Critical Risks:** 0 (Critical risk count)
-- **Test Pass Rate:** 72% (Quality metric)
-
-### Charts & Visualizations
-1. **Domain Scores** - Bar chart showing health by release/domain
-2. **Risk Distribution** - Donut chart of risks by severity
-3. **Readiness Breakdown** - Base maturity + risk penalty
-4. **Project Health Status** - Count of projects by health status
-
-### Navigation Menu (Left Sidebar)
-- 🏠 Dashboard - Main KPI overview
-- 📈 KPI Analysis - Detailed KPI breakdown
-- 🔧 Components - System components
-- 📋 ECRs - Engineering Change Requests
-- ⚠️ Risks - Risk register and analysis
-- 📊 Trends - Trend analysis over time
-- ✅ Actions - Action items and issues
-- 📤 Upload - Data upload interface
-- 🔍 Audit - Audit trail
-- 💡 Insights - AI-powered insights
+### 3. Log In (Bcrypt Secured)
+Sign in using the default manager credentials:
+- **Username / Email**: `admin@kpihub.local`
+- **Password**: `admin123`
 
 ---
 
-## Customization
+## 🛠️ Running Platform Services
 
-### Update KPI Calculations
-Edit `web_app.py` in the `calculate_kpis()` function to modify metric calculations.
+The modernized platform consists of three core executable layers:
 
-### Change Colors & Styling
-Look for the CSS section at the top of `web_app.py` to customize colors and layout.
+### 1. Streamlit Web Dashboard
+- **Command**: `python -m streamlit run web_app.py`
+- **Main Page**: Houses the role-based auth gate, then redirects to the 9-page dashboard navigation.
+- **Port**: Default `8501`
 
-### Add New Visualizations
-Use Plotly (already imported) to add new charts in the respective view sections.
+### 2. FastAPI REST API Sidecar
+- **Command**: `uvicorn api.main:app --host 127.0.0.1 --port 8000 --reload`
+- **API Documentation**: Access interactive swagger docs at `http://127.0.0.1:8000/docs`.
+- **Endpoints**:
+  - `/health` - Service health status with SQLite database ping checks.
+  - `/api/v1/projects` - Retrieve structured project health and status lists.
+  - `/api/v1/metrics` - Fetch real-time quality and compliance KPI metrics.
+
+### 3. Automated Sync Scheduler
+- **Command**: `python -m integrations.scheduler`
+- **Single Run**: `python -m integrations.scheduler --once`
+- **Function**: Automatically synchronizes data from active connectors (Jira, Codebeamer, GitHub, Outlook Calendar, SAP, Slack, Teams, Email) and loads them into runtime CSV files.
 
 ---
 
-## Troubleshooting
+## 📂 Core Architecture & Customization
 
-### Port Already in Use
+- **SQLite Database Layer**: All operational views read data from `data/kpihub.db`. Runtime CSV files in `data/` are automatically synced to the SQLite tables via `lib/database.py` during initialization and data uploads.
+- **KPI calculations**: Business logic for EVM forecasting, release readiness, and cross-system compliance penalties is managed in `lib/kpi_engine.py`.
+- **Styles & Themes**: Modern UI styling tokens and styling parameters are consolidated in `lib/styling.py` and `lib/styles.css`.
+- **Page Configurations**: Pages 1 to 9 are located in the `pages/` directory.
+
+---
+
+## 🧪 Verification & Testing
+
+Verify that your local setup is correct by running the unit test suite:
 ```bash
-streamlit run web_app.py --server.port 8502
+python -m pytest
 ```
-
-### Data Not Loading
-Ensure CSV files are in the `data/` folder:
-- data/projects/projects_status.csv
-- data/risks/risk_register.csv
-- data/resources/resource_allocation.csv
-- data/metrics/defects.csv
-- etc.
-
-### Module Not Found
-```bash
-pip install streamlit pandas plotly numpy
-```
-
----
-
-## Performance Tips
-
-- First load may take a few seconds to process all CSV files
-- Use the `@st.cache_data` decorator (already in code) to cache data
-- For large datasets, consider filtering in the view sections
-
----
-
-## Next Steps
-
-1. Run the app with `streamlit run web_app.py`
-2. Explore all navigation tabs
-3. Modify colors and styling to match your brand
-4. Add real data by replacing CSV files
-5. Deploy to cloud (AWS, Heroku, Google Cloud, etc.)
-
----
-
-## Deployment Options
-
-### Local Network
-```bash
-streamlit run web_app.py --server.address 0.0.0.0
-```
-
-### Docker
-```dockerfile
-FROM python:3.9
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-CMD ["streamlit", "run", "web_app.py"]
-```
-
-### Cloud Deployment
-- **Streamlit Cloud:** https://share.streamlit.io/
-- **Heroku:** Container deployment
-- **AWS:** EC2 + Docker
-- **Google Cloud:** Cloud Run
-
----
-
-**Status:** ✅ Ready to Run
-**Version:** 1.0
-**Last Updated:** May 30, 2026
+*Expected: 110 tests passed successfully.*
