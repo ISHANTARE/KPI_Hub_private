@@ -1,7 +1,0 @@
-TIMESTAMP,SOURCE_RESOURCE,TARGET_BOTTLENECK,HOURS_TRANSFERRED,ESTIMATED_COST_DELTA,NEW_SOURCE_UTIL,NEW_TARGET_UTIL,DECISION,RATIONALE
-2026-06-16T11:37:07.904972,Anna Jacobs,Tech Resource Pool,20,0,0%,101%,ACCEPTED,Accepted AI Recommendation
-2026-06-16T11:37:21.012007,Jennifer Lee,Chris Brown,10,0,69%,122%,REJECTED,PM Overrode AI Recommendation
-2026-06-16T11:37:24.639915,Jennifer Lee,Chris Brown,10,0,69%,122%,ACCEPTED,Accepted AI Recommendation
-2026-06-16T11:37:27.801489,Jennifer Lee,Chris Brown,10,0,69%,122%,REJECTED,PM Overrode AI Recommendation
-2026-06-16T11:37:32.704593,Anna Jacobs,Tech Resource Pool,20,0,0%,101%,ACCEPTED,Accepted AI Recommendation
-2026-06-16T18:24:06.467795,Jennifer Lee,Tech Resource Pool,5,0,77.5%,116%,ACCEPTED,Accepted AI Recommendation

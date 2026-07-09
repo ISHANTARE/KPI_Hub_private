@@ -1,5 +1,0 @@
-TIMESTAMP,RECIPIENT,CHANNEL,EVENT_TYPE,STATUS,DETAILS
-2026-06-17T11:35:10.358678,Alice Supervisor,Teams,TEST,SUCCESS,Sent to AliceSupervisor_teams
-2026-06-17T11:35:10.362678,Alice Supervisor,Email,TEST,SUCCESS,Sent to alice.supervisor@onward.local
-2026-06-17T11:35:10.366661,Nobody,Both,TEST,FAILED,Person Nobody not found in org_mapping
-2026-06-17T11:35:10.376376,Missing Email Person,Both,TEST,FAILED,Invalid or missing contact details for Missing Email Person

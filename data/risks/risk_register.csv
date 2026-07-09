@@ -1,8 +1,0 @@
-RISK_ID,PROJECT_ID,RISK_TITLE,DESCRIPTION,IMPACT,PROBABILITY,EXPOSURE_SCORE,SEVERITY,STATUS,OWNER,MITIGATION_PLAN,DUE_DATE,CREATED_DATE,DAYS_OPEN,TITLE,IMPACT_SCORE
-R001,P001,Supplier Lead Time Delay,TurboCharger compressor supplier experiencing delays,HIGH,HIGH,9.0,CRITICAL,OPEN,John Smith,Engage secondary supplier,2026-06-15,2026-05-15,15.0,,
-R002,P001,Design Review Backlog,CFD analysis bottleneck impacting thermal design,MEDIUM,HIGH,6.0,HIGH,OPEN,Maria Garcia,Allocate additional CFD resources,2026-06-10,2026-05-20,11.0,,
-R003,P002,Supply Chain Volatility,Semiconductor shortage impacting EV Motor availability,HIGH,MEDIUM,6.0,HIGH,MITIGATED,David Chen,Stockpile critical components,2026-06-30,2026-04-15,46.0,,
-R004,P003,Safety Compliance Gap,ISO 26262 requirements not fully traced,HIGH,HIGH,9.0,CRITICAL,OPEN,Patricia Williams,Complete gap analysis,2026-06-05,2026-05-10,20.0,,
-R005,P005,Cybersecurity Assessment,Third-party security audit may find issues,MEDIUM,MEDIUM,4.0,MEDIUM,OPEN,Robert Johnson,Plan contingency,2026-07-31,2026-05-01,29.0,,
-R006,P004,Knowledge Transfer,Legacy expertise concentrated with retiring staff,HIGH,MEDIUM,6.0,HIGH,CLOSED,Jennifer Lee,Completed documentation,2026-04-30,2026-02-01,89.0,,
-RSK-009,P004,Supplier Bankruptcy,Primary tier 2 supplier filed for Chapter 11,HIGH,HIGH,9.0,CRITICAL,OPEN,Supply Chain,Activate backup supplier contract,2026-06-20,2026-05-18,12.0,,
