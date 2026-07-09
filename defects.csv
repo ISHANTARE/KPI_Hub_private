@@ -1,0 +1,51 @@
+DEFECT_ID,TITLE,SEVERITY,STATUS,PROJECT_ID,CREATED_DATE,PRIORITY
+BUG001,Battery charging stops at 95%,CRITICAL,OPEN,P001,2026-06-15,P0
+BUG002,Motor overheats during acceleration,HIGH,OPEN,P002,2026-06-18,P1
+BUG003,Safety system delay,CRITICAL,OPEN,P003,2026-06-20,P0
+BUG004,Temperature sensor reading incorrect,HIGH,CLOSED,P001,2026-06-10,P1
+BUG005,Controller resets unexpectedly,MEDIUM,CLOSED,P002,2026-06-05,P2
+BUG006,UI not responsive on mobile,MEDIUM,CLOSED,P001,2026-05-30,P2
+BUG007,API response times slow,MEDIUM,CLOSED,P003,2026-05-25,P2
+BUG008,Database query timeout,HIGH,CLOSED,P002,2026-05-20,P1
+BUG009,Memory leak in background process,HIGH,OPEN,P001,2026-06-12,P1
+BUG010,File upload limit too low,LOW,CLOSED,P003,2026-05-15,P3
+BUG011,Export format not supported,LOW,CLOSED,P002,2026-05-10,P3
+BUG012,Typo in error message,LOW,CLOSED,P001,2026-05-05,P3
+BUG013,Color contrast accessibility issue,MEDIUM,CLOSED,P003,2026-06-08,P2
+BUG014,Cache not invalidating properly,HIGH,OPEN,P002,2026-06-16,P1
+BUG015,Authentication fails intermittently,CRITICAL,CLOSED,P001,2026-06-14,P0
+BUG016,Battery drain in standby mode,MEDIUM,CLOSED,P001,2026-06-11,P2
+BUG017,Motor vibration during startup,HIGH,CLOSED,P002,2026-06-09,P1
+BUG018,Safety sensor false positive,CRITICAL,CLOSED,P003,2026-06-07,P0
+BUG019,Data not syncing across devices,HIGH,OPEN,P001,2026-06-19,P1
+BUG020,Performance degradation with large datasets,MEDIUM,CLOSED,P002,2026-06-06,P2
+BUG021,Session timeout too short,MEDIUM,CLOSED,P003,2026-06-04,P2
+BUG022,Push notification not working,LOW,CLOSED,P001,2026-06-02,P3
+BUG023,Documentation link broken,LOW,CLOSED,P002,2026-05-31,P3
+BUG024,Search results incomplete,MEDIUM,CLOSED,P003,2026-05-29,P2
+BUG025,Battery calibration inaccurate,HIGH,OPEN,P001,2026-06-17,P1
+BUG026,Motor speed fluctuation,HIGH,CLOSED,P002,2026-06-13,P1
+BUG027,Safety system lag,CRITICAL,CLOSED,P003,2026-06-03,P0
+BUG028,Network connectivity timeout,MEDIUM,CLOSED,P001,2026-05-28,P2
+BUG029,Database corruption on restart,HIGH,CLOSED,P002,2026-05-23,P1
+BUG030,User preference not saved,LOW,CLOSED,P003,2026-05-18,P3
+BUG031,Duplicate data in reports,MEDIUM,CLOSED,P001,2026-05-13,P2
+BUG032,Email notification delay,LOW,CLOSED,P002,2026-05-08,P3
+BUG033,System crash on specific input,CRITICAL,OPEN,P003,2026-06-21,P0
+BUG034,Version mismatch between modules,MEDIUM,CLOSED,P001,2026-06-01,P2
+BUG035,Thread safety issue,HIGH,CLOSED,P002,2026-05-27,P1
+BUG036,Memory not released after operation,HIGH,OPEN,P003,2026-06-22,P1
+BUG037,Permission denied on file access,MEDIUM,CLOSED,P001,2026-05-22,P2
+BUG038,Invalid date format in database,MEDIUM,CLOSED,P002,2026-05-17,P2
+BUG039,Encoding issue in import,HIGH,CLOSED,P003,2026-05-12,P1
+BUG040,Certificate expiration warning missing,MEDIUM,CLOSED,P001,2026-05-07,P2
+BUG041,Incomplete error logging,LOW,CLOSED,P002,2026-05-02,P3
+BUG042,Missing field in export,LOW,CLOSED,P003,2026-04-27,P3
+BUG043,Incorrect calculation in summary,MEDIUM,CLOSED,P001,2026-04-22,P2
+BUG044,Query parameter ignored,MEDIUM,CLOSED,P002,2026-04-17,P2
+BUG045,Response header missing,LOW,CLOSED,P003,2026-04-12,P3
+BUG046,Port conflict on startup,MEDIUM,CLOSED,P001,2026-04-07,P2
+BUG047,Deprecated API still in use,HIGH,CLOSED,P002,2026-04-02,P1
+BUG048,Missing dependency check,HIGH,OPEN,P003,2026-06-23,P1
+BUG049,Configuration file not found,MEDIUM,CLOSED,P001,2026-05-28,P2
+BUG050,Environment variable not recognized,LOW,CLOSED,P002,2026-05-23,P3

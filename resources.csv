@@ -1,0 +1,7 @@
+RESOURCE_ID,ROLE,PROJECT_ID,UTILIZATION_PCT
+RM001,Project Manager,P001,92
+RM002,Senior Design Engineer,P001,105
+RM003,Controls Engineer,P002,88
+RM004,Safety Engineer,P003,95
+RM005,Test Engineer,P001,78
+RM006,Systems Engineer,P003,100

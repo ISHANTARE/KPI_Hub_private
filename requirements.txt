@@ -1,51 +1,24 @@
-# KPI Hub — Python dependencies
-# Pin to compatible-release (~=) so minor updates are picked up but
-# breaking major bumps are blocked. Use exact pins (==) for anything
-# known to have breaking changes between patch versions.
+# KPI Hub MVP Demo - Dependencies
 
-# ── Core UI ────────────────────────────────────────────────────
+# Core UI
 streamlit~=1.28.1
 
-# ── Data processing ────────────────────────────────────────────
+# Data processing
 pandas~=2.1.3
 numpy~=1.24.3
 
-# ── Visualisation ──────────────────────────────────────────────
+# Visualization
 plotly~=5.18.0
 
-# ── Config / integration utilities ─────────────────────────────
+# API / Web
+fastapi~=0.104.0
+uvicorn~=0.24.0
 requests~=2.31.0
+pydantic~=2.5.0
+
+# Configuration
 PyYAML~=6.0
-schedule==1.2.0
-
-# ── AI / ML (used by lib/ai_engine.py with graceful fallback) ──
-scikit-learn~=1.3.2
-scipy~=1.11.4
-
-# ── Optional integrations ──────────────────────────────────────
-# azure-devops is still in beta; pin to exact beta release
-azure-devops==7.1.0b4
-asana~=3.2.2
-# slack-sdk is declared but send() currently logs only.
-# Keep it so the import guard works when the send is wired up.
-slack-sdk~=3.23.0
-
-# ── Date/time utilities ────────────────────────────────────────
-# python-dateutil is a transitive dep of pandas but we import it
-# directly in lib/copilot.py, so declare it explicitly.
-python-dateutil~=2.8.2
-
-# ── Secrets / env ──────────────────────────────────────────────
 python-dotenv~=1.0.0
 
-# ── Testing ────────────────────────────────────────────────────
-pytest~=8.2.0
-hypothesis~=6.108.0
-
-# ── Reporting ──────────────────────────────────────────────────
-# reportlab 3.6.x does not support Python 3.13; use 4.x+
-reportlab~=4.0.0
-
-# ── Document parsing ───────────────────────────────────────────
-python-pptx~=1.0.2
-openpyxl~=3.1.4
+# Optional: for production deployment
+gunicorn~=21.2.0
